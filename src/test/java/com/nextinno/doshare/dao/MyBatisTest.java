@@ -25,6 +25,7 @@ import com.nextinno.doshare.login.mapper.LoginMapper;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+// 이 부분이 가장 중요하다. DataSource를 가져오는 것이다.
 @ContextConfiguration(classes = { DoShareDbConfig.class })
 public class MyBatisTest {
     private final Logger logger = LoggerFactory.getLogger(MyBatisTest.class);
