@@ -6,15 +6,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nextinno.doshare.common.JwtFilter;
 import com.nextinno.doshare.config.DoShareConfig;
 
+@SuppressWarnings("deprecation")
 @Controller
 @Configuration
 @EnableAutoConfiguration(exclude = {DataSourceTransactionManagerAutoConfiguration.class,
@@ -33,6 +36,15 @@ public class Main {
     String home() {
         logger.info("home API Request!");
         return "connect/login";
+    }
+    
+    @Bean
+    public FilterRegistrationBean jwtFilter() {
+        final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(new JwtFilter());
+        registrationBean.addUrlPatterns("/api/*");
+
+        return registrationBean;
     }
 
     public static void main(String[] args) {
