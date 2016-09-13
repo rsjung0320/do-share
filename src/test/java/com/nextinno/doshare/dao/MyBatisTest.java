@@ -38,8 +38,9 @@ public class MyBatisTest {
     @Test
     public void gettingStarted() throws IOException {
         
-        List<User> users = loginMapper.findByUserName();
-
-        logger.info("users : ", users);
+        User user = new User();
+        user.setEmail("rsjung@gmail.com");
+        User resultUser = loginMapper.findByUser(user);
+        logger.info("users : ", resultUser);
     }
 }

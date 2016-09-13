@@ -4,7 +4,26 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.nextinno.doshare.login.mapper.LoginMapper">
-    <select id="findByUserName" resultType="com.nextinno.doshare.domain.users.User">
-        SELECT * FROM user
+    <select id="certificationUser" parameterType="com.nextinno.doshare.domain.users.User"
+        resultType="com.nextinno.doshare.domain.users.User">
+        SELECT *
+        FROM
+        USER
+        WHERE
+        email = #{email} 
+        AND password = #{password}
     </select>
+    <select id="findByUser" parameterType="com.nextinno.doshare.domain.users.User"
+        resultType="com.nextinno.doshare.domain.users.User">
+        SELECT *
+        FROM
+        USER
+        WHERE
+        email = #{email}
+    </select>
+    <insert id="addUser" parameterType="com.nextinno.doshare.domain.users.User">
+        INSERT INTO USER (email, name, password, role)
+        VALUES
+        (#{email}, #{name}, #{password}, #{role})
+    </insert>
 </mapper>

@@ -5,37 +5,22 @@ package com.nextinno.doshare.domain.users;
  *
  */
 public class User {
-    private String userName = "";
+    private String email = "";
+    private String name = "";   
     private String password = "";
-    private String name = "";      
-    private int isAccountNonExpired = 0;
-    private int isAccountNonLocked = 0;
-    private int isCredentialsNonExpired = 0;
-    private int isEnabled = 0;
-    
+    // user / admin
+    private String role = "user";
     /**
-     * @return the userName
+     * @return the email
      */
-    public String getUserName() {
-        return userName;
+    public String getEmail() {
+        return email;
     }
     /**
-     * @param userName the userName to set
+     * @param email the email to set
      */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-    /**
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String email) {
+        this.email = email;
     }
     /**
      * @return the name
@@ -50,52 +35,27 @@ public class User {
         this.name = name;
     }
     /**
-     * @return the isAccountNonExpired
+     * @return the password
      */
-    public int getIsAccountNonExpired() {
-        return isAccountNonExpired;
+    public String getPassword() {
+        return password;
     }
     /**
-     * @param isAccountNonExpired the isAccountNonExpired to set
+     * @param password the password to set
      */
-    public void setIsAccountNonExpired(int isAccountNonExpired) {
-        this.isAccountNonExpired = isAccountNonExpired;
+    public void setPassword(String password) {
+        this.password = password;
     }
     /**
-     * @return the isAccountNonLocked
+     * @return the role
      */
-    public int getIsAccountNonLocked() {
-        return isAccountNonLocked;
+    public String getRole() {
+        return role;
     }
     /**
-     * @param isAccountNonLocked the isAccountNonLocked to set
+     * @param role the role to set
      */
-    public void setIsAccountNonLocked(int isAccountNonLocked) {
-        this.isAccountNonLocked = isAccountNonLocked;
+    public void setRole(String role) {
+        this.role = role;
     }
-    /**
-     * @return the isCredentialsNonExpired
-     */
-    public int getIsCredentialsNonExpired() {
-        return isCredentialsNonExpired;
-    }
-    /**
-     * @param isCredentialsNonExpired the isCredentialsNonExpired to set
-     */
-    public void setIsCredentialsNonExpired(int isCredentialsNonExpired) {
-        this.isCredentialsNonExpired = isCredentialsNonExpired;
-    }
-    /**
-     * @return the isEnabled
-     */
-    public int getIsEnabled() {
-        return isEnabled;
-    }
-    /**
-     * @param isEnabled the isEnabled to set
-     */
-    public void setIsEnabled(int isEnabled) {
-        this.isEnabled = isEnabled;
-    }
-      
 }
