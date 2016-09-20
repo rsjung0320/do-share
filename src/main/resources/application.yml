@@ -13,6 +13,8 @@ jwt:
       path: auth
       refresh: refresh
 
+file:
+ uploadPath: /var/nextinno/doshare/images/
 
 
 ...

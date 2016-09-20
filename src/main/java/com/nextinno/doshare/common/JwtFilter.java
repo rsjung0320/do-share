@@ -30,6 +30,7 @@ public class JwtFilter extends GenericFilterBean {
         final String secret = "nextinno";
         
         logger.info("=====================doFilter====================");
+        // to-do 요청된 url이 login 일 때만 가능하도록 한다.
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             
@@ -52,8 +53,6 @@ public class JwtFilter extends GenericFilterBean {
             }            
         }
 
-        
-        
         chain.doFilter(req, res);
     }
     
