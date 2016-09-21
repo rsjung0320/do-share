@@ -9,4 +9,7 @@
         VALUES
         (#{title}, #{email}, #{uploadDate}, #{content})
     </insert>
+    <select id="findAllBoard" resultType="com.nextinno.doshare.domain.boards.Board">
+        SELECT * FROM BOARD
+    </select>
 </mapper>

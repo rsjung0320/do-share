@@ -31,7 +31,7 @@ public class DoShareDbConfig {
         org.apache.tomcat.jdbc.pool.DataSource dataSource =
                 new org.apache.tomcat.jdbc.pool.DataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/dodb");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/dodb?useUnicode=true&characterEncoding=utf8");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
 

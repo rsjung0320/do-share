@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +44,7 @@ public class BoardController {
 
     @Autowired
     private BoardMapper boardMapper;
-    
+
     @RequestMapping(value = "upload/image", method = RequestMethod.POST)
     @ResponseBody
     public String uploadImage(@RequestParam(value = "file") MultipartFile file) {
@@ -66,11 +67,11 @@ public class BoardController {
 
         return file.getOriginalFilename();
     }
-    
+
     @RequestMapping(value = "upload/board", method = RequestMethod.POST)
     @ResponseBody
     public String uploadBoard(@RequestBody final Board board) {
-        
+
         boardMapper.addBoard(board);
         logger.info("board : " + board.toString());
         return "success";
@@ -116,6 +117,14 @@ public class BoardController {
             }
         }
         out.flush();
+    }
+
+    @RequestMapping(value = "all", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Board> findAllBoard(HttpServletRequest request, HttpServletResponse response) {
+        List<Board> resultBoard = boardMapper.findAllBoard();
+        
+        return resultBoard;
     }
 
     public void saveFile(InputStream uploadedInputStream, String serverLocation) throws IOException {
