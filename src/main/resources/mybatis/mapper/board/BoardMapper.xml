@@ -10,6 +10,15 @@
         (#{title}, #{email}, #{uploadDate}, #{content})
     </insert>
     <select id="findAllBoard" resultType="com.nextinno.doshare.domain.boards.Board">
-        SELECT * FROM BOARD
+        SELECT 
+            idx AS idx,
+            email AS email,
+            title AS title,
+            uploadDate AS uploadDate,
+            updatedDate AS updatedDate,
+            readCount AS readCount,
+            imagePath AS imagePath,
+            content AS content
+        FROM BOARD
     </select>
 </mapper>

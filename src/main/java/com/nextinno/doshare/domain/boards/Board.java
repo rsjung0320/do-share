@@ -5,6 +5,8 @@ package com.nextinno.doshare.domain.boards;
  *
  */
 public class Board {
+    // index
+    private int idx = 0;
     // 글 제목
     private String title = "";
     // 글쓴이
@@ -20,6 +22,19 @@ public class Board {
     // 글 태그
     private String content = "";
    
+    
+    /**
+     * @return the idx
+     */
+    public int getIdx() {
+        return idx;
+    }
+    /**
+     * @param idx the idx to set
+     */
+    public void setIdx(int idx) {
+        this.idx = idx;
+    }
     /**
      * @return the title
      */
