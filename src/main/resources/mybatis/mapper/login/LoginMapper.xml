@@ -8,7 +8,7 @@
         resultType="com.nextinno.doshare.domain.users.User">
         SELECT *
         FROM
-        USER
+            user
         WHERE
         email = #{email} 
         AND password = #{password}
@@ -17,12 +17,12 @@
         resultType="com.nextinno.doshare.domain.users.User">
         SELECT *
         FROM
-        USER
+            user
         WHERE
         email = #{email}
     </select>
     <insert id="addUser" parameterType="com.nextinno.doshare.domain.users.User">
-        INSERT INTO USER (email, name, password, role)
+        INSERT INTO user (email, name, password, role)
         VALUES
         (#{email}, #{name}, #{password}, #{role})
     </insert>

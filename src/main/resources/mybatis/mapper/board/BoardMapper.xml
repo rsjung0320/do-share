@@ -5,9 +5,21 @@
 
 <mapper namespace="com.nextinno.doshare.board.mapper.BoardMapper">
     <insert id="addBoard" parameterType="com.nextinno.doshare.domain.boards.Board">
-        INSERT INTO BOARD (title, email, uploadDate, content)
+        INSERT INTO board (title, email, uploadDate, content)
         VALUES
         (#{title}, #{email}, #{uploadDate}, #{content})
+    </insert>
+    <insert id="updateReadCount" parameterType="com.nextinno.doshare.domain.boards.Board">
+        UPDATE board 
+        SET
+            readCount = #{readCount}
+        WHERE
+            idx = #{idx}
+    </insert>
+    <insert id="addComment" parameterType="com.nextinno.doshare.domain.comments.Comment">
+        INSERT INTO comment (email, uploadDate, content, board_id)
+        VALUES
+        (#{email}, #{uploadDate}, #{content}, #{board_id})
     </insert>
     <select id="findAllBoard" resultType="com.nextinno.doshare.domain.boards.Board">
         SELECT 
@@ -19,6 +31,32 @@
             readCount AS readCount,
             imagePath AS imagePath,
             content AS content
-        FROM BOARD
+        FROM board
+    </select>
+    <select id="findById" resultType="com.nextinno.doshare.domain.boards.Board">
+        SELECT 
+            idx AS idx,
+            email AS email,
+            title AS title,
+            uploadDate AS uploadDate,
+            updatedDate AS updatedDate,
+            readCount AS readCount,
+            imagePath AS imagePath,
+            content AS content
+        FROM board
+        WHERE
+            idx = #{idx}
+    </select>
+    <select id="commentFindById" resultType="com.nextinno.doshare.domain.comments.Comment">
+        SELECT 
+            idx AS idx,
+            email AS email,
+            uploadDate AS uploadDate,
+            goodCount AS goodCount,
+            content AS content,
+            board_id AS board_id
+        FROM comment
+        WHERE
+            board_id = #{board_id}
     </select>
 </mapper>

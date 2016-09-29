@@ -66,21 +66,6 @@ public class Main {
         return token;
     }
     
-    @PostMapping("/user3")
-    // 나는 json으로만 데이터를 주고 받을 것이니 @ResponseBody는 없도록 한다.
-    @ResponseBody
-    String user3(HttpServletRequest request) {
-        return "hello world";
-    }
-    
-    @GetMapping("/admin/api/user4")
-    // 나는 json으로만 데이터를 주고 받을 것이니 @ResponseBody는 없도록 한다.
-    @ResponseBody
-    String user4() {
-        logger.info("user4 API Request!");
-        return "admin";
-    }
-    
     private Claims getClaimsFromToken(String token) {
         Claims claims;
         try {
@@ -114,13 +99,8 @@ public class Main {
 //    }
 
     public static void main(String[] args) {
-
         SpringApplication.run(Main.class, args);
-        logger.info("main start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         
-        String LogLevel = DoShareConfig.getProperty("LogLevel");
-        logger.info("LogLevel : " + LogLevel);
-        logger.debug("main??????");
     }
     
     @Bean

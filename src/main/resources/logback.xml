@@ -5,6 +5,7 @@
     <!-- Clay 설정 파일을 직접 로드한다. -->
     <!-- clay.path는 로컬에서 개발할 때 VM argments에 D:\nable로 정의하고 실서버에서는 쉘 스크립트에 정의한다. -->
     <!-- <property file="${clay.path:-/nable}/nems/current/conf/nems.conf"></property> -->
+    <property file="${MainPath:-/nextinno/doshare/current/conf}/doshare.conf"></property>
 
     <appender name="fileLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 로그 파일 이름 -->

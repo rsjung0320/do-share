@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.board.mapper.BoardMapper;
 import com.nextinno.doshare.domain.boards.Board;
+import com.nextinno.doshare.domain.comments.Comment;
 
 /**
  * @author rsjung
@@ -125,6 +126,32 @@ public class BoardController {
         List<Board> resultBoard = boardMapper.findAllBoard();
         
         return resultBoard;
+    }
+    
+    @RequestMapping(value = "{idx}", method = RequestMethod.GET)
+    @ResponseBody
+    public Board findById(@PathVariable int idx, HttpServletRequest request, HttpServletResponse response) {
+        Board resultBoard = boardMapper.findById(idx);
+        resultBoard.setReadCount(resultBoard.getReadCount()+1);
+        // readCount를 1증가 시킨다.
+        boardMapper.updateReadCount(resultBoard);
+        return resultBoard;
+    }
+    
+    @RequestMapping(value = "comment", method = RequestMethod.POST)
+    @ResponseBody
+    public String addComment(@RequestBody final Comment comment) {
+        boardMapper.addComment(comment);
+        logger.info("comment : " + comment.toString());
+        return "success";
+    }
+    
+    @RequestMapping(value = "comment/{idx}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Comment> commentFindById(@PathVariable int idx) {
+        List<Comment> resultComment = boardMapper.commentFindById(idx);
+        logger.info("comment : " + resultComment.toString());
+        return resultComment;
     }
 
     public void saveFile(InputStream uploadedInputStream, String serverLocation) throws IOException {

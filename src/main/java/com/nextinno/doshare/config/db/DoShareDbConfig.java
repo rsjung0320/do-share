@@ -31,9 +31,10 @@ public class DoShareDbConfig {
         org.apache.tomcat.jdbc.pool.DataSource dataSource =
                 new org.apache.tomcat.jdbc.pool.DataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/dodb?useUnicode=true&characterEncoding=utf8");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
+        // to-do 설정 값에서 가져오도록 한다. github에 올라가면 안되는 정보이기 때문에
+        dataSource.setUrl("jdbc:mysql://192.168.13.165:3306/dodb?useUnicode=true&characterEncoding=utf8");
+        dataSource.setUsername("rsjung");
+        dataSource.setPassword("rsjung");
 
         return dataSource;
     }

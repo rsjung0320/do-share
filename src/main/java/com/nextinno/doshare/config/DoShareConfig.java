@@ -61,14 +61,14 @@ public class DoShareConfig {
      * 
      * @return
      */
-    private static String getClayPath() {
+    private static String getMainPath() {
         String clayPath = System.getProperty("clay.path");
 
         // 같은 파티션에 있으면 "D:"를 지정하지 않아도 인식이 된다.
         // 불필요해보여 주석 처리함.
-//        if (isWindows()) {
-//            clayPath = "D:/nable";
-//        }
+        if (isWindows()) {
+            clayPath = "C:/nextinno";
+        }
 
         if (clayPath == null) {
             clayPath = "/nextinno";
@@ -98,7 +98,7 @@ public class DoShareConfig {
      * @return
      */
     public static String getConfigFilePath() {
-        return getClayPath() + "/" + PROCESS_NAME + "/current/conf/" + PROCESS_NAME + ".conf";
+        return getMainPath() + "/" + PROCESS_NAME + "/current/conf/" + PROCESS_NAME + ".conf";
     }
     
     /**
