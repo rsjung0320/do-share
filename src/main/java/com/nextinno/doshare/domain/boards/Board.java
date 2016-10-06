@@ -122,9 +122,10 @@ public class Board {
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
+    
     @Override
     public String toString() {
-        return "Board [title=" + title + ", email=" + email + ", uploadDate=" + uploadDate + ", updatedDate="
+        return "Board [idx =" + idx + ", title=" + title + ", email=" + email + ", uploadDate=" + uploadDate + ", updatedDate="
                 + updatedDate + ", readCount=" + readCount + ", imagePath=" + imagePath + ", content=" + content + "]";
     }
 }

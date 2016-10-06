@@ -5,8 +5,7 @@ spring:
             appSecret: a76f88cc34b3df45da6cae064e126bf5
 
 jwt:
-  header: Authorization
-  secret: mySecret
+  secret: nextInno
   expiration: 604800
   route:
     authentication:

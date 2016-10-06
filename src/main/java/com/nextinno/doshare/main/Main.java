@@ -2,9 +2,6 @@ package com.nextinno.doshare.main;
 
 import java.nio.charset.Charset;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -19,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -36,10 +32,6 @@ import com.nextinno.doshare.config.DoShareConfig;
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-    
-//    /**
-//     * @return
-//     */
     
     @GetMapping("/user")
     // 나는 json으로만 데이터를 주고 받을 것이니 @ResponseBody는 없도록 한다.
@@ -62,52 +54,20 @@ public class Main {
 //        }
         
         logger.info("home API Request!");
-//        claims.
         return token;
     }
     
-    private Claims getClaimsFromToken(String token) {
-        Claims claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey("nextinno")
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            claims = null;
-        }
-        return claims;
-    }
-    
-    public String getUsernameFromToken(String token) {
-        String username;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            username = claims.getSubject();
-        } catch (Exception e) {
-            username = null;
-        }
-        return username;
-    }
-//    @Bean
-//    public FilterRegistrationBean jwtFilter() {
-//        final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-//        registrationBean.setFilter(new JwtFilter());
-//        registrationBean.addUrlPatterns("/api/**");
-//
-//        return registrationBean;
-//    }
-
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
-        
+        logger.info("main start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
     
+    // server 단을 UTF-8로 변환시켜주는 함수
     @Bean
     public HttpMessageConverter<String> responseBodyConverter() {
         return new StringHttpMessageConverter(Charset.forName("UTF-8"));
     }
- 
+    // server 단을 UTF-8로 변환시켜주는 함수
     @Bean
     public Filter characterEncodingFilter() {
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();

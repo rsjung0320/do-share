@@ -18,4 +18,6 @@ public interface BoardMapper {
     public void updateReadCount(Board board);
     public void addComment(Comment comment);
     public List<Comment> commentFindById(int board_idx);
+    public void updateEditedBoard(Board board);
+    public void deleteBoard(String idx);
 }

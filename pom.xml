@@ -23,7 +23,7 @@
 
         <libjunix.version>1.0.0</libjunix.version>
 
-        <jjwt.version>0.6.0</jjwt.version>
+        <jjwt.version>0.7.0</jjwt.version>
     </properties>
 
     <dependencies>
@@ -69,13 +69,6 @@
             <artifactId>janino</artifactId>
         </dependency>
 
-        <!-- lombok 관련 Dependency -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- jwt 인증 관련 -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -92,6 +85,11 @@
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

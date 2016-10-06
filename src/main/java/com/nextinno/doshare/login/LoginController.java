@@ -1,17 +1,13 @@
 package com.nextinno.doshare.login;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nextinno.doshare.api.API;
+import com.nextinno.doshare.common.Common;
 import com.nextinno.doshare.domain.users.User;
 import com.nextinno.doshare.login.mapper.LoginMapper;
-
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * @author rsjung
@@ -35,74 +29,79 @@ public class LoginController {
     
     @Autowired
     private LoginMapper loginMapper;
-
-    private final Map<String, List<String>> userDb = new HashMap<>();
-
-    public LoginController() {
-        userDb.put("tom", Arrays.asList("user"));
-        userDb.put("sally", Arrays.asList("user", "admin"));
-    }
-
-    @RequestMapping(value = "signin", method = RequestMethod.POST, consumes = "application/json")
+    
+    @RequestMapping(value = "signin", method = RequestMethod.POST, consumes="application/json")
     @ResponseBody
     public String singin(@RequestBody final User reqUser)
         throws ServletException {
         
         // to-do 암호화 하는 것 생각해 보기, 클라이언트에서 먼저 암호화 해서 보내고, 받고 해야 할 것 같다.
-        String email = reqUser.getEmail();
-        String role = reqUser.getRole();
-
-        if(certificationUser(reqUser)){
-            String token = Jwts.builder().setSubject(email)
-                    .claim("roles", role).setIssuedAt(new Date())
-                    .signWith(SignatureAlgorithm.HS256, "nextinno").compact();
+        String password = reqUser.getPassword();
+        
+        // 1. DB에서 값을 가져온다.
+        User user = certificationUser(reqUser);
+        if( user != null ){
             
-            return token;
+            // 2. password를 비교한다.
+            if(password.equals(user.getPassword())){
+                
+                // 3. 아무런 변경이 없으면 token을 발행한다.
+                String token = Common.generateToken(user.getEmail(), user.getRole());
+                
+//                return new ResponseEntity<String>(token, HttpStatus.OK);
+                return token;
+            } else {
+                
+//                return new ResponseEntity<String>("Check your ID or Password", HttpStatus.BAD_REQUEST);
+                return "Check your ID or Password";
+            }
         } else {
-            // to-do exception으로 하지 말고, response를 error코드와 에러메지시를 주도록 한다.
-            // 아니면 에러 코드만 주고 클라이언트에서 하도록 한다. 
             // 그리고 i18n을 적용하도록 한다. 
-            throw new ServletException("아이디, 패스워드가 다릅니다. 다시확인해주세요.");
+//            return new ResponseEntity<String>("Check your ID or Password", HttpStatus.BAD_REQUEST);
+            return "Check your ID or Password";
         }
     }
+    
+    // to-do 토큰 발행해 주는 것을 만든다.
+    // 먼저 해당 id와  증명된 사용자라면 다면 다시 토큰을 재 발행해 준다.
+    
 
-    @RequestMapping(value = "signup", method = RequestMethod.POST, consumes = "application/json")
+    /**
+     * @param reqUser
+     * @return 201 성공적으로 요청되었으며 서버가 새 리소스를 작성했다.
+     * @throws Exception
+     */
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(value = "signup", method = RequestMethod.POST)
     @ResponseBody
-    public String signup(@RequestBody final User reqUser)
+    public ResponseEntity signup(@RequestBody final User reqUser)
         throws Exception {
-        
-        String email = reqUser.getEmail();
-        String role = reqUser.getRole();
         
         // 1. DB에 값이 있는지 확인한다.
         if(!isExistUser(reqUser)){
             // 2. 없으면 DB에 값을 insert 한다.
             loginMapper.addUser(reqUser);
-            // to-do 에러처리 해야 함
         } else {
             // 2.1 있으면 에러메시지를 response 한다.
-            logger.error("user가 존재한다.");
-            throw new Exception("user가 존재한다.");
+            // to-do i18n 처리한다.
+            logger.error("User already existed.");
+            return new ResponseEntity<String>("User already existed.", HttpStatus.BAD_REQUEST);
         }
         
-        // 3. insert 후 jwt 를 만들어서 200 ok와 token 값을 준다.
-        String token = Jwts.builder().setSubject(email)
-                .claim("roles", role).setIssuedAt(new Date())
-                .signWith(SignatureAlgorithm.HS256, "nextinno").compact();
-        
-        return token;
+        // 3. 201 ok를 준다.
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     /**
      * @param reqUser
      * @return
      */
-    private boolean certificationUser(User reqUser) {
+    private User certificationUser(User reqUser) {
         User user = loginMapper.certificationUser(reqUser);
         if( user != null ){
-            return true;
+            return user;
         } else {
-            return false;
+            return null;
         }
     }
     

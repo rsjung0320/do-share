@@ -42,6 +42,8 @@ public class DoShareConfig {
     public static final String LOG_LEVEL_DEBUG = "LOG_DEBUG";
     public static final String LOG_LEVEL_INFO = "LOG_INFO";
     public static final String LOG_LEVEL_ERROR = "LOG_ERROR";
+    
+    public static final String SECRET = "nextInno";
 
     private static Properties properties;
 

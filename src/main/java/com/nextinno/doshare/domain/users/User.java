@@ -58,4 +58,14 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("User [email=").append(email).append(", name=").append(name).append(", password=")
+                .append(password).append(", role=").append(role).append("]");
+        return builder.toString();
+    }
 }

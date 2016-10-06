@@ -21,6 +21,19 @@
         VALUES
         (#{email}, #{uploadDate}, #{content}, #{board_id})
     </insert>
+    <update id="updateEditedBoard" parameterType="com.nextinno.doshare.domain.boards.Board">
+        UPDATE board 
+        SET
+            content = #{content}
+        WHERE
+            idx = #{idx}
+    </update>
+    <delete id="deleteBoard">
+        DELETE FROM
+            board
+        WHERE
+            idx = #{idx}
+    </delete>
     <select id="findAllBoard" resultType="com.nextinno.doshare.domain.boards.Board">
         SELECT 
             idx AS idx,

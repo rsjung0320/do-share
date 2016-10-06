@@ -2,6 +2,7 @@ package com.nextinno.doshare.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,7 @@ import com.nextinno.doshare.common.JwtFilter;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(2)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -33,9 +35,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // 여기에 path를 두는 것은 어느 path던 통과가 된다.
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/user");
+        web.ignoring().antMatchers("/images/**", "/fonts/**", "/styles/**", "/login/**");
     }
-    
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -58,8 +60,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
+//                .antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll()
                 .antMatchers("/api/v1/**").permitAll()
                 .anyRequest().authenticated();
+//                .and()
+//                .httpBasic().and()
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // to-do 좀 더 알아 볼 것. 이곳에 ROLE도 추가할 수 있음.
 //                .antMatchers("/admin/api/**").access("hasRole('admin')");
 //                .anyRequest().hasRole("admin");
@@ -68,6 +75,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Custom JWT based security filter
         httpSecurity
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+//        httpSecurity
+//        .addFilter(authenticationTokenFilterBean());
 
         // disable page caching
         httpSecurity.headers().cacheControl();

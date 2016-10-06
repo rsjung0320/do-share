@@ -49,24 +49,17 @@ public class BoardController {
     @RequestMapping(value = "upload/image", method = RequestMethod.POST)
     @ResponseBody
     public String uploadImage(@RequestParam(value = "file") MultipartFile file) {
-
         String filePath = "";
         logger.info("name : " + file.getOriginalFilename());
         try {
-            // to-do 파일 이름은 새로 만들도록 한다.
+            // to-do 파일 이름은 유니크하게 새로 만들도록 한다.
             saveFile(file.getInputStream(), uploadPath + file.getOriginalFilename());
-
-            // 저장된 path를 DB에 넣는다.
-
-            // DB에 저장된 URL을 클라이언트에게 보낸다.
 
             filePath = uploadPath + file.getOriginalFilename();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("uploadImage : ", e);
         }
-
-        return file.getOriginalFilename();
+        return filePath;
     }
 
     @RequestMapping(value = "upload/board", method = RequestMethod.POST)
@@ -77,7 +70,22 @@ public class BoardController {
         logger.info("board : " + board.toString());
         return "success";
     }
-
+    
+    @RequestMapping(value = "upload/edited/board", method = RequestMethod.POST)
+    @ResponseBody
+    public String uploadEditedBoard(@RequestBody final Board board) {
+        logger.info("uploadEditedBoard : " + board.toString());
+        boardMapper.updateEditedBoard(board);
+        return "success";
+    }
+    
+    @RequestMapping(value = "delete/{idx}", method = RequestMethod.GET)
+    @ResponseBody
+    public String deleteBoard(@PathVariable String idx) {
+        boardMapper.deleteBoard(idx);
+        return "success";
+    }
+    
     @RequestMapping(value = "download/{name}", method = RequestMethod.GET)
     @ResponseBody
     public void download(@PathVariable String name, HttpServletRequest request, HttpServletResponse response)
