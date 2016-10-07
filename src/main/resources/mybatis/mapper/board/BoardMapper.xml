@@ -24,6 +24,7 @@
     <update id="updateEditedBoard" parameterType="com.nextinno.doshare.domain.boards.Board">
         UPDATE board 
         SET
+            title = #{title},
             content = #{content}
         WHERE
             idx = #{idx}
