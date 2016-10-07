@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import scala.annotation.meta.setter;
 
 import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.board.mapper.BoardMapper;
@@ -48,18 +53,25 @@ public class BoardController {
 
     @RequestMapping(value = "upload/image", method = RequestMethod.POST)
     @ResponseBody
-    public String uploadImage(@RequestParam(value = "file") MultipartFile file) {
+    public ResponseEntity<String> uploadImage(@RequestParam(value = "file") MultipartFile file) {
         String filePath = "";
         logger.info("name : " + file.getOriginalFilename());
+        UUID uuid = UUID.randomUUID();
         try {
-            // to-do 파일 이름은 유니크하게 새로 만들도록 한다.
-            saveFile(file.getInputStream(), uploadPath + file.getOriginalFilename());
+            String splitData[] = file.getOriginalFilename().split("\\.");
+            String fileType = splitData[splitData.length - 1];
+            
+            
+            
+            filePath = uploadPath + uuid.toString() + "." + fileType;
+            
+            saveFile(file.getInputStream(), filePath);
 
-            filePath = uploadPath + file.getOriginalFilename();
         } catch (IOException e) {
             logger.error("uploadImage : ", e);
+            return new ResponseEntity<String>("uploadImage : " + e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return filePath;
+        return new ResponseEntity<String>(uuid.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "upload/board", method = RequestMethod.POST)
@@ -70,7 +82,7 @@ public class BoardController {
         logger.info("board : " + board.toString());
         return "success";
     }
-    
+
     @RequestMapping(value = "upload/edited/board", method = RequestMethod.POST)
     @ResponseBody
     public String uploadEditedBoard(@RequestBody final Board board) {
@@ -78,14 +90,14 @@ public class BoardController {
         boardMapper.updateEditedBoard(board);
         return "success";
     }
-    
+
     @RequestMapping(value = "delete/{idx}", method = RequestMethod.GET)
     @ResponseBody
     public String deleteBoard(@PathVariable String idx) {
         boardMapper.deleteBoard(idx);
         return "success";
     }
-    
+
     @RequestMapping(value = "download/{name}", method = RequestMethod.GET)
     @ResponseBody
     public void download(@PathVariable String name, HttpServletRequest request, HttpServletResponse response)
@@ -132,20 +144,20 @@ public class BoardController {
     @ResponseBody
     public List<Board> findAllBoard(HttpServletRequest request, HttpServletResponse response) {
         List<Board> resultBoard = boardMapper.findAllBoard();
-        
+
         return resultBoard;
     }
-    
+
     @RequestMapping(value = "{idx}", method = RequestMethod.GET)
     @ResponseBody
     public Board findById(@PathVariable int idx, HttpServletRequest request, HttpServletResponse response) {
         Board resultBoard = boardMapper.findById(idx);
-        resultBoard.setReadCount(resultBoard.getReadCount()+1);
+        resultBoard.setReadCount(resultBoard.getReadCount() + 1);
         // readCount를 1증가 시킨다.
         boardMapper.updateReadCount(resultBoard);
         return resultBoard;
     }
-    
+
     @RequestMapping(value = "comment", method = RequestMethod.POST)
     @ResponseBody
     public String addComment(@RequestBody final Comment comment) {
@@ -153,7 +165,7 @@ public class BoardController {
         logger.info("comment : " + comment.toString());
         return "success";
     }
-    
+
     @RequestMapping(value = "comment/{idx}", method = RequestMethod.GET)
     @ResponseBody
     public List<Comment> commentFindById(@PathVariable int idx) {
