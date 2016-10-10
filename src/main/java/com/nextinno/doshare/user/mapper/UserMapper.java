@@ -9,5 +9,5 @@ import com.nextinno.doshare.domain.users.User;
  */
 @DoShareDb
 public interface UserMapper {
-    public User findByEmail(String email);
+    public User findByEmail(User user);
 }

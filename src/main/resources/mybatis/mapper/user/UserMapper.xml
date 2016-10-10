@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.nextinno.doshare.user.mapper.UserMapper">
-    <select id="findByEmail" resultType="com.nextinno.doshare.domain.users.User">
+    <select id="findByEmail" parameterType="com.nextinno.doshare.domain.users.User" resultType="com.nextinno.doshare.domain.users.User">
         SELECT 
             idx,
             email,
