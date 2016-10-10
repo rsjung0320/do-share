@@ -5,11 +5,25 @@ package com.nextinno.doshare.domain.users;
  *
  */
 public class User {
+    private int idx = 0;
     private String email = "";
     private String name = "";   
     private String password = "";
     // user / admin
     private String role = "user";
+    
+    /**
+     * @return the idx
+     */
+    public int getIdx() {
+        return idx;
+    }
+    /**
+     * @param idx the idx to set
+     */
+    public void setIdx(int idx) {
+        this.idx = idx;
+    }
     /**
      * @return the email
      */
@@ -64,8 +78,8 @@ public class User {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("User [email=").append(email).append(", name=").append(name).append(", password=")
-                .append(password).append(", role=").append(role).append("]");
+        builder.append("User [idx=").append(idx).append(", email=").append(email).append(", name=").append(name)
+                .append(", password=").append(password).append(", role=").append(role).append("]");
         return builder.toString();
     }
 }

@@ -61,8 +61,6 @@ public class BoardController {
             String splitData[] = file.getOriginalFilename().split("\\.");
             String fileType = splitData[splitData.length - 1];
             
-            
-            
             filePath = uploadPath + uuid.toString() + "." + fileType;
             
             saveFile(file.getInputStream(), filePath);

@@ -6,6 +6,7 @@
 <mapper namespace="com.nextinno.doshare.user.mapper.UserMapper">
     <select id="findByEmail" resultType="com.nextinno.doshare.domain.users.User">
         SELECT 
+            idx,
             email,
             name,
             role

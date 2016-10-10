@@ -5,9 +5,9 @@
 
 <mapper namespace="com.nextinno.doshare.board.mapper.BoardMapper">
     <insert id="addBoard" parameterType="com.nextinno.doshare.domain.boards.Board">
-        INSERT INTO board (title, email, uploadDate, content)
+        INSERT INTO board (title, email, uploadDate, content, author_id)
         VALUES
-        (#{title}, #{email}, #{uploadDate}, #{content})
+        (#{title}, #{email}, #{uploadDate}, #{content}, #{authorId})
     </insert>
     <insert id="updateReadCount" parameterType="com.nextinno.doshare.domain.boards.Board">
         UPDATE board 
@@ -44,7 +44,8 @@
             updatedDate AS updatedDate,
             readCount AS readCount,
             imagePath AS imagePath,
-            content AS content
+            content AS content,
+            author_id AS authorId
         FROM board
     </select>
     <select id="findById" resultType="com.nextinno.doshare.domain.boards.Board">
@@ -56,7 +57,8 @@
             updatedDate AS updatedDate,
             readCount AS readCount,
             imagePath AS imagePath,
-            content AS content
+            content AS content,
+            author_id AS authorId
         FROM board
         WHERE
             idx = #{idx}

@@ -21,6 +21,8 @@ public class Board {
     private String imagePath = "";
     // 글 태그
     private String content = "";
+    // user의 idx
+    private int authorId = 0;
    
     
     /**
@@ -119,14 +121,30 @@ public class Board {
     public void setContent(String content) {
         this.content = content;
     }
+    /**
+     * @return the authorId
+     */
+    public int getAuthorId() {
+        return authorId;
+    }
+    /**
+     * @param authorId the authorId to set
+     */
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    
     @Override
     public String toString() {
-        return "Board [idx =" + idx + ", title=" + title + ", email=" + email + ", uploadDate=" + uploadDate + ", updatedDate="
-                + updatedDate + ", readCount=" + readCount + ", imagePath=" + imagePath + ", content=" + content + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("Board [idx=").append(idx).append(", title=").append(title).append(", email=").append(email)
+                .append(", uploadDate=").append(uploadDate).append(", updatedDate=").append(updatedDate)
+                .append(", readCount=").append(readCount).append(", imagePath=").append(imagePath).append(", content=")
+                .append(content).append(", authorId=").append(authorId).append("]");
+        return builder.toString();
     }
 }
 

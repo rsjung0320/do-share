@@ -32,7 +32,7 @@ public class LoginController {
     
     @RequestMapping(value = "signin", method = RequestMethod.POST, consumes="application/json")
     @ResponseBody
-    public String singin(@RequestBody final User reqUser)
+    public ResponseEntity<String> singin(@RequestBody final User reqUser)
         throws ServletException {
         
         // to-do 암호화 하는 것 생각해 보기, 클라이언트에서 먼저 암호화 해서 보내고, 받고 해야 할 것 같다.
@@ -48,17 +48,14 @@ public class LoginController {
                 // 3. 아무런 변경이 없으면 token을 발행한다.
                 String token = Common.generateToken(user.getEmail(), user.getRole());
                 
-//                return new ResponseEntity<String>(token, HttpStatus.OK);
-                return token;
+                return new ResponseEntity<String>(token, HttpStatus.OK);
             } else {
                 
-//                return new ResponseEntity<String>("Check your ID or Password", HttpStatus.BAD_REQUEST);
-                return "Check your ID or Password";
+                return new ResponseEntity<String>("Check your ID or Password.", HttpStatus.BAD_REQUEST);
             }
         } else {
             // 그리고 i18n을 적용하도록 한다. 
-//            return new ResponseEntity<String>("Check your ID or Password", HttpStatus.BAD_REQUEST);
-            return "Check your ID or Password";
+            return new ResponseEntity<String>("Check your ID or Password.", HttpStatus.BAD_REQUEST);
         }
     }
     
