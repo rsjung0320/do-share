@@ -84,4 +84,16 @@ public class Comment {
     public void setBoard_id(int board_id) {
         this.board_id = board_id;
     }
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Comment [idx=").append(idx).append(", email=").append(email).append(", uploadDate=")
+                .append(uploadDate).append(", goodCount=").append(goodCount).append(", content=").append(content)
+                .append(", board_id=").append(board_id).append("]");
+        return builder.toString();
+    }
+    
 }

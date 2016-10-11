@@ -35,6 +35,8 @@ import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.board.mapper.BoardMapper;
 import com.nextinno.doshare.domain.boards.Board;
 import com.nextinno.doshare.domain.comments.Comment;
+import com.nextinno.doshare.domain.users.User;
+import com.nextinno.doshare.global.domain.GlobalDomain;
 
 /**
  * @author rsjung
@@ -53,7 +55,8 @@ public class BoardController {
 
     @RequestMapping(value = "upload/image", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> uploadImage(@RequestParam(value = "file") MultipartFile file) {
+    public ResponseEntity<GlobalDomain> uploadImage(@RequestParam(value = "file") MultipartFile file) {
+        GlobalDomain globalDomain = new GlobalDomain();
         String filePath = "";
         logger.info("name : " + file.getOriginalFilename());
         UUID uuid = UUID.randomUUID();
@@ -65,35 +68,40 @@ public class BoardController {
             
             saveFile(file.getInputStream(), filePath);
 
+            globalDomain.setMessage(uuid.toString() + "." + fileType);
         } catch (IOException e) {
             logger.error("uploadImage : ", e);
-            return new ResponseEntity<String>("uploadImage : " + e, HttpStatus.INTERNAL_SERVER_ERROR);
+            globalDomain.setMessage("uploadImage : " + e);
+            return new ResponseEntity<GlobalDomain>(globalDomain, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<String>(uuid.toString(), HttpStatus.OK);
+        return new ResponseEntity<GlobalDomain>(globalDomain, HttpStatus.OK);
     }
 
+    @SuppressWarnings("rawtypes")
     @RequestMapping(value = "upload/board", method = RequestMethod.POST)
     @ResponseBody
-    public String uploadBoard(@RequestBody final Board board) {
+    public ResponseEntity uploadBoard(@RequestBody final Board board) {
 
         boardMapper.addBoard(board);
         logger.info("board : " + board.toString());
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
 
+    @SuppressWarnings("rawtypes")
     @RequestMapping(value = "upload/edited/board", method = RequestMethod.POST)
     @ResponseBody
-    public String uploadEditedBoard(@RequestBody final Board board) {
+    public ResponseEntity uploadEditedBoard(@RequestBody final Board board) {
         logger.info("uploadEditedBoard : " + board.toString());
         boardMapper.updateEditedBoard(board);
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
 
+    @SuppressWarnings("rawtypes")
     @RequestMapping(value = "delete/{idx}", method = RequestMethod.GET)
     @ResponseBody
-    public String deleteBoard(@PathVariable String idx) {
+    public ResponseEntity deleteBoard(@PathVariable String idx) {
         boardMapper.deleteBoard(idx);
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "download/{name}", method = RequestMethod.GET)
@@ -140,36 +148,38 @@ public class BoardController {
 
     @RequestMapping(value = "all", method = RequestMethod.GET)
     @ResponseBody
-    public List<Board> findAllBoard(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<List<Board>> findAllBoard(HttpServletRequest request, HttpServletResponse response) {
         List<Board> resultBoard = boardMapper.findAllBoard();
 
-        return resultBoard;
+        return new ResponseEntity<List<Board>>(resultBoard, HttpStatus.OK);
     }
 
     @RequestMapping(value = "{idx}", method = RequestMethod.GET)
     @ResponseBody
-    public Board findById(@PathVariable int idx, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Board> findById(@PathVariable int idx, HttpServletRequest request, HttpServletResponse response) {
         Board resultBoard = boardMapper.findById(idx);
         resultBoard.setReadCount(resultBoard.getReadCount() + 1);
         // readCount를 1증가 시킨다.
         boardMapper.updateReadCount(resultBoard);
-        return resultBoard;
+        //to-do select 해온 값으로 보내록 한다. 지금은 set한 값으로 주고 있다.
+        return new ResponseEntity<Board>(resultBoard, HttpStatus.OK);
     }
 
+    @SuppressWarnings("rawtypes")
     @RequestMapping(value = "comment", method = RequestMethod.POST)
     @ResponseBody
-    public String addComment(@RequestBody final Comment comment) {
+    public ResponseEntity addComment(@RequestBody final Comment comment) {
         boardMapper.addComment(comment);
         logger.info("comment : " + comment.toString());
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "comment/{idx}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Comment> commentFindById(@PathVariable int idx) {
+    public ResponseEntity<List<Comment>> commentFindById(@PathVariable int idx) {
         List<Comment> resultComment = boardMapper.commentFindById(idx);
         logger.info("comment : " + resultComment.toString());
-        return resultComment;
+        return new ResponseEntity<List<Comment>>(resultComment, HttpStatus.OK);
     }
 
     public void saveFile(InputStream uploadedInputStream, String serverLocation) throws IOException {

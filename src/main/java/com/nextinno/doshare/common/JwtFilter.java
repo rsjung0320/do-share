@@ -53,7 +53,8 @@ public class JwtFilter extends GenericFilterBean {
 
     private boolean isExcludeUrl(HttpServletRequest request) {
         String uri = request.getRequestURI().toString().trim();
-        if (uri.startsWith("/login/") || uri.startsWith("/api/v1/board/download/")) {
+        if (uri.startsWith("/login/") || uri.startsWith("/api/v1/board/download/")
+                || uri.startsWith("/api/v1/board/all/")) {
             return true;
         } else {
             return false;
