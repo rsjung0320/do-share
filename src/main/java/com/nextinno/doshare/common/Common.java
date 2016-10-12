@@ -54,7 +54,8 @@ public class Common {
      */
     public static String generateToken(String email, String role) {
         Date today = new Date();
-        Date tomorrow = new Date(today.getTime() + (1000 * 60 * 60 * 2));
+//        Date tomorrow = new Date(today.getTime() + (1000 * 60 * 60 * 2));
+        Date tomorrow = new Date(today.getTime() + (1000 * 60 * 1));
         return Jwts.builder().claim("roles", role).setIssuedAt(today).setExpiration(tomorrow).setIssuer(email)
                 .signWith(SignatureAlgorithm.HS256, DoShareConfig.SECRET).compact();
     }
@@ -68,7 +69,8 @@ public class Common {
      */
     public static String generateRefreshToken(String email, String role) {
         Date today = new Date();
-        Date oneMonth = new Date(today.getTime() + (1000 * 60 * 60 * 24 * 30));
+        // expires 가 25일 이상만 되도 저장이 안된다. 크롬 정책인듯 하다.
+        Date oneMonth = new Date(today.getTime() + (1000 * 60 * 60 * 24 * 20));
 
         return Jwts.builder().claim("roles", role).setIssuedAt(today).setExpiration(oneMonth).setIssuer(email)
                 .signWith(SignatureAlgorithm.HS256, DoShareConfig.SECRET).compact();
