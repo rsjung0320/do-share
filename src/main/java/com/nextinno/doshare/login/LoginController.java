@@ -124,6 +124,32 @@ public class LoginController {
             return new ResponseEntity("Invalid token.", HttpStatus.BAD_REQUEST);
         }
     }
+    
+    /**
+     * 1시간 마다 클라이언트에서  token을 regenerate 하기 위해 request를 보내는대, 그것을 처리하기 위한 함수이다.
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @RequestMapping(value = "token/regenerate", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity regenerateToken(@RequestBody Map<String, Object> params) throws Exception {
+        Token token = new Token();
+           
+        if(isExpired((String)params.get("token"))){
+            token.setToken(Common.generateToken((String)params.get("email"), (String)params.get("role")));
+            if( (boolean)params.get("remember") ){
+                token.setRefreshToken(Common.generateRefreshToken((String)params.get("email"), (String)params.get("role")));
+            }
+            
+            return new ResponseEntity<Token>(token, HttpStatus.OK);
+        } else {
+            logger.error("Invalid token.");
+            return new ResponseEntity("Invalid token.", HttpStatus.BAD_REQUEST);
+        }
+    }
 
     /**
      * @param string

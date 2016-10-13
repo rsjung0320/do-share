@@ -54,8 +54,8 @@ public class Common {
      */
     public static String generateToken(String email, String role) {
         Date today = new Date();
-//        Date tomorrow = new Date(today.getTime() + (1000 * 60 * 60 * 2));
-        Date tomorrow = new Date(today.getTime() + (1000 * 60 * 1));
+        Date tomorrow = new Date(today.getTime() + (1000 * 60 * 60 * 2));
+//        Date tomorrow = new Date(today.getTime() + (1000 * 60 * 1));
         return Jwts.builder().claim("roles", role).setIssuedAt(today).setExpiration(tomorrow).setIssuer(email)
                 .signWith(SignatureAlgorithm.HS256, DoShareConfig.SECRET).compact();
     }
