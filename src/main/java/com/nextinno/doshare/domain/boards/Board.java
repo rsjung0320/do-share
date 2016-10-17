@@ -40,8 +40,8 @@ public class Board {
     @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
     private String content = "";
     // user의 idx
-//    @ManyToOne
-//    private User user;
+    @ManyToOne
+    private User user;
     /**
      * @return the idx
      */

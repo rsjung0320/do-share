@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.domain.users.User;
-import com.nextinno.doshare.user.mapper.UserMapper;
+import com.nextinno.doshare.domain.users.UserRepository;
 
 /**
  * @author rsjung
@@ -25,12 +25,12 @@ public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
     
     @Autowired
-    private UserMapper userMapper;
+    private UserRepository userRepository;
     
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<User> findByEmail(@RequestBody final User reqUser) {
-        User user = userMapper.findByEmail(reqUser);
+        User user = userRepository.findByEmail(reqUser.getEmail());
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 }

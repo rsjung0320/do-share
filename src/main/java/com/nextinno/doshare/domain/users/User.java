@@ -34,9 +34,9 @@ public class User {
     @Column(name = "role", nullable = false)
     private String role = "user";
     
-//    @OneToMany(targetEntity=Board.class)
-//    @JoinColumn(nullable = true)
-//    private List<Board> Boards;
+    @OneToMany(targetEntity=Board.class)
+    @JoinColumn(nullable = true)
+    private List<Board> Boards;
 
     /**
      * @return the idx

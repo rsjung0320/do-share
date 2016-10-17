@@ -156,9 +156,7 @@ public class BoardController {
     @RequestMapping(value = "all", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<Board>> findAllBoard(HttpServletRequest request, HttpServletResponse response) {
-        List<Board> resultBoard = null;
-        long test = boardRepository.count();
-        logger.info("test : " + test);
+        List<Board> resultBoard = boardRepository.findAll();
 
         return new ResponseEntity<List<Board>>(resultBoard, HttpStatus.OK);
     }

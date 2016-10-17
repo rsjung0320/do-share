@@ -2,8 +2,11 @@ package com.nextinno.doshare.login;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
+
 import java.util.Map;
+
 import javax.servlet.ServletException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +23,8 @@ import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.common.Common;
 import com.nextinno.doshare.domain.tokens.Token;
 import com.nextinno.doshare.domain.users.User;
+import com.nextinno.doshare.domain.users.UserRepository;
 import com.nextinno.doshare.global.domain.GlobalDomain;
-import com.nextinno.doshare.login.mapper.LoginMapper;
 
 /**
  * @author rsjung
@@ -32,7 +35,7 @@ public class LoginController {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
-    private LoginMapper loginMapper;
+    private UserRepository userRepository;
     
     @Value("${jwt.secret}")
     private String SECRET;
@@ -52,7 +55,7 @@ public class LoginController {
         String password = reqUser.getPassword();
 
         // 1. DB에서 값을 가져온다.
-        User user = certificationUser(reqUser);
+        User user = userRepository.findByEmail(reqUser.getEmail());
         if (user != null) {
             // 2. password를 비교한다.
             if (password.equals(user.getPassword())) {
@@ -88,9 +91,9 @@ public class LoginController {
     public ResponseEntity signup(@RequestBody final User reqUser) throws Exception {
 
         // 1. DB에 값이 있는지 확인한다.
-        if (!isExistUser(reqUser)) {
+        if (!isCertificatedUser(reqUser.getEmail(), reqUser.getPassword())) {
             // 2. 없으면 DB에 값을 insert 한다.
-            loginMapper.addUser(reqUser);
+            userRepository.save(reqUser);
         } else {
             // 2.1 있으면 에러메시지를 response 한다.
             // to-do i18n 처리한다.
@@ -164,25 +167,13 @@ public class LoginController {
         return true;
     }
 
-    /**
-     * @param reqUser
-     * @return
-     */
-    private User certificationUser(User reqUser) {
-        User user = loginMapper.certificationUser(reqUser);
-        if (user != null) {
-            return user;
-        } else {
-            return null;
-        }
-    }
 
     /**
      * @param reqUser
      * @return
      */
-    private boolean isExistUser(User reqUser) {
-        User user = loginMapper.findByUser(reqUser);
+    private boolean isCertificatedUser(String email, String password) {
+        User user = userRepository.findByEmailAndPassword(email, password);
         if (user != null) {
             return true;
         } else {
