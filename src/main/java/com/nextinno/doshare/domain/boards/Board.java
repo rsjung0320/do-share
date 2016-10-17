@@ -1,40 +1,57 @@
 package com.nextinno.doshare.domain.boards;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import com.nextinno.doshare.domain.users.User;
+
 /**
  * @author rsjung
  *
  */
+@Entity
 public class Board {
     // index
-    private int idx = 0;
+    @Id
+    @GeneratedValue
+    private long idx = 0;
     // 글 제목
+    @Column(name = "title", nullable = false)
     private String title = "";
     // 글쓴이
+    @Column(name = "email", nullable = false)
     private String email = "";
     // 글 쓴 날짜
+    @Column(name = "upload_date", nullable = false)
     private String uploadDate = "";
     // 최종 수정
+    @Column(name = "updated_date")
     private String updatedDate = "";
     // 조회 수
+    @Column(name = "read_count")
     private int readCount = 0;
     // 이미지 path
+    @Column(name = "image_path")
     private String imagePath = "";
     // 글 태그
+    @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
     private String content = "";
     // user의 idx
-    private int authorId = 0;
-   
-    
+//    @ManyToOne
+//    private User user;
     /**
      * @return the idx
      */
-    public int getIdx() {
+    public long getIdx() {
         return idx;
     }
     /**
      * @param idx the idx to set
      */
-    public void setIdx(int idx) {
+    public void setIdx(long idx) {
         this.idx = idx;
     }
     /**
@@ -121,30 +138,29 @@ public class Board {
     public void setContent(String content) {
         this.content = content;
     }
-    /**
-     * @return the authorId
-     */
-    public int getAuthorId() {
-        return authorId;
-    }
-    /**
-     * @param authorId the authorId to set
-     */
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Board [idx=").append(idx).append(", title=").append(title).append(", email=").append(email)
-                .append(", uploadDate=").append(uploadDate).append(", updatedDate=").append(updatedDate)
-                .append(", readCount=").append(readCount).append(", imagePath=").append(imagePath).append(", content=")
-                .append(content).append(", authorId=").append(authorId).append("]");
-        return builder.toString();
-    }
+//    /**
+//     * @return the user
+//     */
+//    public User getUser() {
+//        return user;
+//    }
+//    /**
+//     * @param user the user to set
+//     */
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
+//    /* (non-Javadoc)
+//     * @see java.lang.Object#toString()
+//     */
+//    @Override
+//    public String toString() {
+//        StringBuilder builder = new StringBuilder();
+//        builder.append("Board [idx=").append(idx).append(", title=").append(title).append(", email=").append(email)
+//                .append(", uploadDate=").append(uploadDate).append(", updatedDate=").append(updatedDate)
+//                .append(", readCount=").append(readCount).append(", imagePath=").append(imagePath).append(", content=")
+//                .append(content).append(", user=").append(user).append("]");
+//        return builder.toString();
+//    }
 }
 
