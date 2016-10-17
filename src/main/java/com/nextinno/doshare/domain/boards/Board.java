@@ -1,11 +1,18 @@
 package com.nextinno.doshare.domain.boards;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.DynamicUpdate;
+
+import com.nextinno.doshare.domain.comments.Comment;
 import com.nextinno.doshare.domain.users.User;
 
 /**
@@ -13,6 +20,7 @@ import com.nextinno.doshare.domain.users.User;
  *
  */
 @Entity
+@DynamicUpdate
 public class Board {
     // index
     @Id
@@ -42,6 +50,10 @@ public class Board {
     // user의 idx
     @ManyToOne
     private User user;
+    
+    @OneToMany(targetEntity=Comment.class)
+    @JoinColumn(nullable = true)
+    private List<Comment> comments;
     /**
      * @return the idx
      */

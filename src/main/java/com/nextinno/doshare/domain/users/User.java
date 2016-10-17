@@ -36,7 +36,7 @@ public class User {
     
     @OneToMany(targetEntity=Board.class)
     @JoinColumn(nullable = true)
-    private List<Board> Boards;
+    private List<Board> boards;
 
     /**
      * @return the idx

@@ -1,27 +1,44 @@
 package com.nextinno.doshare.domain.comments;
 
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import com.nextinno.doshare.domain.boards.Board;
+
 /**
  * @author rsjung
  *
  */
+@Entity
 public class Comment {
-    private int idx = 0;
+    @Id
+    @GeneratedValue
+    private long idx = 0;
+    @Column(name = "email", nullable = false)
     private String email = "";
+    @Column(name = "upload_date", nullable = false)
     private String uploadDate = "";
+    @Column(name = "good_count")
     private int goodCount = 0;
+    @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
     private String content = "";
-    private int board_id = 0;
-    
+    @ManyToOne
+    private Board board;
     /**
      * @return the idx
      */
-    public int getIdx() {
+    public long getIdx() {
         return idx;
     }
     /**
      * @param idx the idx to set
      */
-    public void setIdx(int idx) {
+    public void setIdx(long idx) {
         this.idx = idx;
     }
     /**
@@ -73,16 +90,16 @@ public class Comment {
         this.content = content;
     }
     /**
-     * @return the board_id
+     * @return the board
      */
-    public int getBoard_id() {
-        return board_id;
+    public Board getBoard() {
+        return board;
     }
     /**
-     * @param board_id the board_id to set
+     * @param board the board to set
      */
-    public void setBoard_id(int board_id) {
-        this.board_id = board_id;
+    public void setBoard(Board board) {
+        this.board = board;
     }
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -92,8 +109,7 @@ public class Comment {
         StringBuilder builder = new StringBuilder();
         builder.append("Comment [idx=").append(idx).append(", email=").append(email).append(", uploadDate=")
                 .append(uploadDate).append(", goodCount=").append(goodCount).append(", content=").append(content)
-                .append(", board_id=").append(board_id).append("]");
+                .append(", board=").append(board).append("]");
         return builder.toString();
     }
-    
 }
