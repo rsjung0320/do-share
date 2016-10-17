@@ -2,21 +2,18 @@ package com.nextinno.doshare.main;
 
 import java.nio.charset.Charset;
 
-import javax.servlet.http.HttpServletRequest;
+
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 
@@ -24,38 +21,13 @@ import javax.servlet.Filter;
 
 import com.nextinno.doshare.config.DoShareConfig;
 
-@Controller
-@Configuration
-@EnableAutoConfiguration(exclude = {DataSourceTransactionManagerAutoConfiguration.class,
-        DataSourceAutoConfiguration.class})
+@EnableJpaRepositories(DoShareConfig.DEFAULT_BASE_PACKAGE)
+@EntityScan(DoShareConfig.DEFAULT_BASE_PACKAGE)
 @ComponentScan(basePackages = DoShareConfig.DEFAULT_BASE_PACKAGE)
+@SpringBootApplication
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-    
-    @GetMapping("/user")
-    // 나는 json으로만 데이터를 주고 받을 것이니 @ResponseBody는 없도록 한다.
-    @ResponseBody
-    String home(HttpServletRequest request) {
-        // 처음으로 들어오면 claims는 String 토큰으로 넘어온다.\
-        // 하지만 한번 인증 받는 것은 claims가 object로 들어오니 현재 에러가 나는 것이다.
-        final String token = (String) request.getAttribute("claims");
-//        String username = getUsernameFromToken(token);
-        
-        // 토큰을 가져와서 먼저 리플래시해야하는지 보고 해야하면 해서 return 하고, 안해도 되면 그냥 값을 리턴한다.
-        // 아래 주석은 참고해서 만들어본다.
-//        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-//
-//        if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
-//            String refreshedToken = jwtTokenUtil.refreshToken(token);
-//            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
-//        } else {
-//            return ResponseEntity.badRequest().body(null);
-//        }
-        
-        logger.info("home API Request!");
-        return token;
-    }
     
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
