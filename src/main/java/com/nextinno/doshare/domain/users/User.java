@@ -4,11 +4,13 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nextinno.doshare.domain.boards.Board;
 
 /**
@@ -24,18 +26,19 @@ public class User {
     @Column(name = "email", nullable = false, unique=true)
     private String email = "";
     
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false)@JsonIgnore
     private String name = "";   
     
     @Column(name = "password", nullable = false)
+    @JsonIgnore
     private String password = "";
     
     // user / admin
     @Column(name = "role", nullable = false)
     private String role = "user";
     
-    @OneToMany(targetEntity=Board.class)
-    @JoinColumn(nullable = true)
+    @OneToMany(targetEntity=Board.class, fetch=FetchType.LAZY)
+    @JoinColumn(name="user_idx", nullable = true)
     private List<Board> boards;
 
     /**

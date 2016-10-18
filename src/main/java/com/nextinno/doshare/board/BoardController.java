@@ -30,15 +30,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import scala.annotation.meta.setter;
-
 import com.nextinno.doshare.api.API;
 //import com.nextinno.doshare.board.mapper.BoardMapper;
 import com.nextinno.doshare.domain.boards.Board;
 import com.nextinno.doshare.domain.boards.BoardRepository;
 import com.nextinno.doshare.domain.comments.Comment;
 import com.nextinno.doshare.domain.comments.CommentRepository;
-import com.nextinno.doshare.domain.users.User;
 import com.nextinno.doshare.global.domain.GlobalDomain;
 
 /**
@@ -180,10 +177,13 @@ public class BoardController {
     }
 
     @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "comment", method = RequestMethod.POST)
+    @RequestMapping(value = "comment/{idx}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity addComment(@RequestBody final Comment comment) {
-//        boardMapper.addComment(comment);
+    public ResponseEntity addComment(@RequestBody final Comment comment, @PathVariable long idx) {
+        Board board = new Board();
+        board.setIdx(idx);
+        comment.setBoard(board);
+        
         commentRepository.save(comment);
         logger.info("comment : " + comment.toString());
         return new ResponseEntity(HttpStatus.OK);
@@ -192,8 +192,7 @@ public class BoardController {
     @RequestMapping(value = "comment/{idx}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<Comment>> commentFindById(@PathVariable long idx) {
-//        List<Comment> resultComment = boardMapper.commentFindById(idx);
-        List<Comment> resultComment = commentRepository.findByIdx(idx);
+        List<Comment> resultComment = commentRepository.findByBoardIdx(idx);
         logger.info("comment : " + resultComment.toString());
         return new ResponseEntity<List<Comment>>(resultComment, HttpStatus.OK);
     }

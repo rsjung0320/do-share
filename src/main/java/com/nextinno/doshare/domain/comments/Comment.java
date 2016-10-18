@@ -4,10 +4,13 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nextinno.doshare.domain.boards.Board;
 
 /**
@@ -27,8 +30,13 @@ public class Comment {
     private int goodCount = 0;
     @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
     private String content = "";
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    @JsonIgnore
     private Board board;
+    
+//    private long board_idx = 0;
+    
     /**
      * @return the idx
      */
@@ -101,15 +109,28 @@ public class Comment {
     public void setBoard(Board board) {
         this.board = board;
     }
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Comment [idx=").append(idx).append(", email=").append(email).append(", uploadDate=")
-                .append(uploadDate).append(", goodCount=").append(goodCount).append(", content=").append(content)
-                .append(", board=").append(board).append("]");
-        return builder.toString();
-    }
+    
+//    /**
+//     * @return the board_idx
+//     */
+//    public long getBoard_idx() {
+//        return board_idx;
+//    }
+//    /**
+//     * @param board_idx the board_idx to set
+//     */
+//    public void setBoard_idx(long board_idx) {
+//        this.board_idx = board_idx;
+//    }
+//    /* (non-Javadoc)
+//     * @see java.lang.Object#toString()
+//     */
+//    @Override
+//    public String toString() {
+//        StringBuilder builder = new StringBuilder();
+//        builder.append("Comment [idx=").append(idx).append(", email=").append(email).append(", uploadDate=")
+//                .append(uploadDate).append(", goodCount=").append(goodCount).append(", content=").append(content)
+//                .append(", board=").append(board).append(", board_idx=").append(board_idx).append("]");
+//        return builder.toString();
+//    }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -48,11 +49,12 @@ public class Board {
     @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
     private String content = "";
     // user의 idx
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;
     
-    @OneToMany(targetEntity=Comment.class)
-    @JoinColumn(nullable = true)
+    @OneToMany(targetEntity=Comment.class, fetch=FetchType.LAZY)
+    @JoinColumn(name="board_idx", nullable = true)
     private List<Comment> comments;
     /**
      * @return the idx
