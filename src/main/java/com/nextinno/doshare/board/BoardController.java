@@ -17,6 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -157,15 +161,15 @@ public class BoardController {
     @Transactional
     @RequestMapping(value = "all", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<Board>> findAllBoard(HttpServletRequest request, HttpServletResponse response) {
-        List<Board> resultBoard = boardRepository.findAll();
+    public ResponseEntity<Page<Board>> findAllBoard(@PageableDefault(direction = Direction.DESC, size = 2) Pageable pageable) {
+        Page<Board> resultBoard = boardRepository.findAll(pageable);
 
-        return new ResponseEntity<List<Board>>(resultBoard, HttpStatus.OK);
+        return new ResponseEntity<Page<Board>>(resultBoard, HttpStatus.OK);
     }
 
     @RequestMapping(value = "{idx}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Board> findById(@PathVariable long idx, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Board> findById(@PathVariable long idx) {
 //        Board resultBoard = boardMapper.findById(idx);
         Board resultBoard = boardRepository.findOne(idx);
         resultBoard.setReadCount(resultBoard.getReadCount() + 1);
