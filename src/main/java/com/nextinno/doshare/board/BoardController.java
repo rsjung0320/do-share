@@ -34,6 +34,7 @@ import com.nextinno.doshare.api.API;
 //import com.nextinno.doshare.board.mapper.BoardMapper;
 import com.nextinno.doshare.domain.boards.Board;
 import com.nextinno.doshare.domain.boards.BoardRepository;
+import com.nextinno.doshare.domain.boards.BoardVo;
 import com.nextinno.doshare.domain.comments.Comment;
 import com.nextinno.doshare.domain.comments.CommentRepository;
 import com.nextinno.doshare.global.domain.GlobalDomain;
@@ -87,18 +88,17 @@ public class BoardController {
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "upload/board", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity uploadBoard(@RequestBody final Board board) {
-
-        boardRepository.save(board);
-        logger.info("board : " + board.toString());
+    public ResponseEntity uploadBoard(@RequestBody final BoardVo boardVo) {
+        boardRepository.save(new Board(boardVo));
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "upload/edited/board", method = RequestMethod.POST)
+    @RequestMapping(value = "upload/edited/board/{idx}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity uploadEditedBoard(@RequestBody final Board board) {
-        logger.info("uploadEditedBoard : " + board.toString());
+    public ResponseEntity uploadEditedBoard(@PathVariable long idx, @RequestBody final BoardVo updatedBoard) {
+        Board board = boardRepository.findOne(idx);
+        board.update(updatedBoard);
         boardRepository.save(board);
         return new ResponseEntity(HttpStatus.OK);
     }

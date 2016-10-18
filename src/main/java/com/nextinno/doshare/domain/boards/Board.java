@@ -56,6 +56,32 @@ public class Board {
     @OneToMany(targetEntity=Comment.class, fetch=FetchType.LAZY)
     @JoinColumn(name="board_idx", nullable = true)
     private List<Comment> comments;
+    
+    public Board(){
+        
+    }
+    public Board(BoardVo boardVo){
+        super();
+        this.title = boardVo.getTitle();
+        this.email = boardVo.getEmail();
+        this.uploadDate = boardVo.getUploadDate();
+        this.updatedDate = boardVo.getUpdatedDate();
+        this.readCount = boardVo.getReadCount();
+        this.imagePath = boardVo.getImagePath();
+        this.content = boardVo.getContent();
+        this.user = new User();
+        user.setIdx(boardVo.getUserIdx());
+    }
+
+    /**
+     * @param updatedBoard
+     */
+    public void update(BoardVo updatedBoard) {
+        this.title = updatedBoard.getTitle();
+        this.updatedDate = updatedBoard.getUpdatedDate();
+        this.content = updatedBoard.getContent();
+    }
+    
     /**
      * @return the idx
      */
