@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nextinno.doshare.domain.boards.Board;
 
 /**
@@ -26,11 +27,10 @@ public class User {
     @Column(name = "email", nullable = false, unique=true)
     private String email = "";
     
-    @Column(name = "name", nullable = false)@JsonIgnore
+    @Column(name = "name", nullable = false)
     private String name = "";   
     
     @Column(name = "password", nullable = false)
-    @JsonIgnore
     private String password = "";
     
     // user / admin
@@ -86,6 +86,7 @@ public class User {
     /**
      * @return the password
      */
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -93,6 +94,7 @@ public class User {
     /**
      * @param password the password to set
      */
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
