@@ -1,7 +1,6 @@
 package com.nextinno.doshare.main;
 
 import java.nio.charset.Charset;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -30,6 +29,14 @@ public class Main {
 
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
+        
+//        Ejb3Configuration cfg = new Ejb3Configuration();
+//        HashMap<String,String> props = new HashMap<String,String>();
+//        props.put("hibernate.format_sql","true");
+//        Ejb3Configuration configured = cfg.configure("nextinno.doshare", props);
+//        SchemaExport se = new SchemaExport(configured.getHibernateConfiguration());
+//        se.setDelimiter(";");
+//        se.create(true, false);
         logger.info("main start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 

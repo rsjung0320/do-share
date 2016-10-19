@@ -158,14 +158,21 @@ public class BoardController {
         out.flush();
     }
 
-    @Transactional
     @RequestMapping(value = "all", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Page<Board>> findAllBoard(@PageableDefault(direction = Direction.DESC, size = 2) Pageable pageable) {
-        Page<Board> resultBoard = boardRepository.findAll(pageable);
+    public ResponseEntity<List<Board>> findAllBoard() {
+        List<Board> resultBoard = boardRepository.findAll();
 
-        return new ResponseEntity<Page<Board>>(resultBoard, HttpStatus.OK);
+        return new ResponseEntity<List<Board>>(resultBoard, HttpStatus.OK);
     }
+    
+//    @RequestMapping(value = "all", method = RequestMethod.GET)
+//    @ResponseBody
+//    public ResponseEntity<Page<Board>> findAllBoard(@PageableDefault(direction = Direction.DESC, size = 2) Pageable pageable) {
+//        Page<Board> resultBoard = boardRepository.findAll(pageable);
+//
+//        return new ResponseEntity<Page<Board>>(resultBoard, HttpStatus.OK);
+//    }
 
     @RequestMapping(value = "{idx}", method = RequestMethod.GET)
     @ResponseBody

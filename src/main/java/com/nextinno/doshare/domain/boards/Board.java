@@ -8,11 +8,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import lombok.Data;
+
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nextinno.doshare.domain.comments.Comment;
 import com.nextinno.doshare.domain.users.User;
 
@@ -22,6 +26,7 @@ import com.nextinno.doshare.domain.users.User;
  */
 @Entity
 @DynamicUpdate
+@Data
 public class Board {
     // index
     @Id
@@ -46,20 +51,23 @@ public class Board {
     @Column(name = "image_path")
     private String imagePath = "";
     // 글 태그
-    @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
+//    @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
+    @Lob
+    @Column(name = "content", nullable = false)
     private String content = "";
     // user의 idx
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(nullable = false)
+    @JsonIgnore
     private User user;
     
     @OneToMany(targetEntity=Comment.class, fetch=FetchType.LAZY)
     @JoinColumn(name="board_idx", nullable = true)
+    @JsonIgnore
     private List<Comment> comments;
     
-    public Board(){
-        
-    }
+    public Board(){}
+    
     public Board(BoardVo boardVo){
         super();
         this.title = boardVo.getTitle();
@@ -82,125 +90,5 @@ public class Board {
         this.content = updatedBoard.getContent();
     }
     
-    /**
-     * @return the idx
-     */
-    public long getIdx() {
-        return idx;
-    }
-    /**
-     * @param idx the idx to set
-     */
-    public void setIdx(long idx) {
-        this.idx = idx;
-    }
-    /**
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
-    /**
-     * @param title the title to set
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    /**
-     * @return the uploadDate
-     */
-    public String getUploadDate() {
-        return uploadDate;
-    }
-    /**
-     * @param uploadDate the uploadDate to set
-     */
-    public void setUploadDate(String uploadDate) {
-        this.uploadDate = uploadDate;
-    }
-    /**
-     * @return the updatedDate
-     */
-    public String getUpdatedDate() {
-        return updatedDate;
-    }
-    /**
-     * @param updatedDate the updatedDate to set
-     */
-    public void setUpdatedDate(String updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-    /**
-     * @return the readCount
-     */
-    public int getReadCount() {
-        return readCount;
-    }
-    /**
-     * @param readCount the readCount to set
-     */
-    public void setReadCount(int readCount) {
-        this.readCount = readCount;
-    }
-    /**
-     * @return the imagePath
-     */
-    public String getImagePath() {
-        return imagePath;
-    }
-    /**
-     * @param imagePath the imagePath to set
-     */
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-    /**
-     * @return the content
-     */
-    public String getContent() {
-        return content;
-    }
-    /**
-     * @param content the content to set
-     */
-    public void setContent(String content) {
-        this.content = content;
-    }
-//    /**
-//     * @return the user
-//     */
-//    public User getUser() {
-//        return user;
-//    }
-//    /**
-//     * @param user the user to set
-//     */
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
-//    /* (non-Javadoc)
-//     * @see java.lang.Object#toString()
-//     */
-//    @Override
-//    public String toString() {
-//        StringBuilder builder = new StringBuilder();
-//        builder.append("Board [idx=").append(idx).append(", title=").append(title).append(", email=").append(email)
-//                .append(", uploadDate=").append(uploadDate).append(", updatedDate=").append(updatedDate)
-//                .append(", readCount=").append(readCount).append(", imagePath=").append(imagePath).append(", content=")
-//                .append(content).append(", user=").append(user).append("]");
-//        return builder.toString();
-//    }
 }
 
