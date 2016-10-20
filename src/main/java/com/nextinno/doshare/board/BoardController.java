@@ -95,7 +95,33 @@ public class BoardController {
     @RequestMapping(value = "upload/board", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity uploadBoard(@RequestBody final BoardVo boardVo) {
-        boardRepository.save(new Board(boardVo));
+        Board board = new Board(boardVo);
+        
+        String tags = boardVo.getTags();
+
+        if( !tags.equals("") ){
+         // 태그들을 먼저 split한다.
+            String[] tagArray = tags.split(" ");
+           
+            for (String tagName : tagArray) {
+                // 해당하는 태그가 있다면 해당 태그의 count를 1 증가시키고, board와 맵핑한다.
+                Tag getTag = tagRepository.findByName(tagName);
+                
+                if(getTag != null){
+                    getTag.setTaggedCount(getTag.getTaggedCount() + 1);
+                    board.getTags().add(getTag);
+                } else {
+                 // 없으면 해당 태그를 만든다.
+                    Tag newTag = new Tag();
+                    newTag.setName(tagName);
+                    newTag.setTaggedCount(newTag.getTaggedCount() + 1);
+                    tagRepository.save(newTag);
+                    board.getTags().add(newTag);
+                }
+            }
+        }
+        
+        boardRepository.save(board);
         return new ResponseEntity(HttpStatus.OK);
     }
 

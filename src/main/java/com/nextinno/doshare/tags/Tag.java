@@ -1,7 +1,7 @@
 package com.nextinno.doshare.tags;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,5 +38,5 @@ public class Tag {
     @ManyToMany(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
     @JoinTable(name = "board_tag", joinColumns = @JoinColumn(name = "tag_idx"), inverseJoinColumns = @JoinColumn(name = "board_idx"))
     @JsonIgnore
-    private Set<Board> boards = new HashSet<Board>();
+    private List<Board> boards = new ArrayList<Board>();
 }

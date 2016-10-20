@@ -1,5 +1,6 @@
 package com.nextinno.doshare.domain.boards;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,7 +77,7 @@ public class Board {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "board_tag", joinColumns = @JoinColumn(name = "board_idx"), inverseJoinColumns = @JoinColumn(name = "tag_idx"))
     @JsonIgnore
-    private Set<Tag> tags = new HashSet<Tag>();
+    private List<Tag> tags = new ArrayList<Tag>();
     
     public Board(){}
     
