@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -42,6 +39,8 @@ import com.nextinno.doshare.domain.boards.BoardVo;
 import com.nextinno.doshare.domain.comments.Comment;
 import com.nextinno.doshare.domain.comments.CommentRepository;
 import com.nextinno.doshare.global.domain.GlobalDomain;
+import com.nextinno.doshare.tags.Tag;
+import com.nextinno.doshare.tags.TagRepository;
 
 /**
  * @author rsjung
@@ -65,6 +64,9 @@ public class BoardController {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
+    
     @RequestMapping(value = "upload/image", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<GlobalDomain> uploadImage(@RequestParam(value = "file") MultipartFile file) {
@@ -104,6 +106,31 @@ public class BoardController {
         Board board = boardRepository.findOne(idx);
         board.update(updatedBoard);
         boardRepository.save(board);
+        
+        // to-do 기존과 tag Name이 같으면 안하고 다를 경우에 아래 로직을 진행 시킨다.
+        
+//        String tags = updatedBoard.getTags();
+        String tags = "java Spring";
+        
+        // 태그들을 먼저 split한다.
+        String[] tagArray = tags.split(" ");
+       
+        for (String tagName : tagArray) {
+            // 해당하는 태그가 있다면 해당 태그의 count를 1 증가시키고, board와 맵핑한다.
+            Tag getTag = tagRepository.findByName(tagName);
+            if(getTag != null){
+                getTag.setTaggedCount(getTag.getTaggedCount() + 1);
+                tagRepository.save(getTag);
+            } else {
+             // 없으면 해당 태그를 만든다.
+                Tag newTag = new Tag();
+                newTag.setName(tagName);
+                newTag.setTaggedCount(newTag.getTaggedCount() + 1);
+                newTag.getBoards().add(board);
+                tagRepository.save(newTag);
+            }
+        }
+        
         return new ResponseEntity(HttpStatus.OK);
     }
 

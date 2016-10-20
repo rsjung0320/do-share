@@ -1,14 +1,19 @@
 package com.nextinno.doshare.domain.boards;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -19,6 +24,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nextinno.doshare.domain.comments.Comment;
 import com.nextinno.doshare.domain.users.User;
+import com.nextinno.doshare.tags.Tag;
 
 /**
  * @author rsjung
@@ -65,6 +71,12 @@ public class Board {
     @JoinColumn(name="board_idx", nullable = true)
     @JsonIgnore
     private List<Comment> comments;
+    
+    //
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "board_tag", joinColumns = @JoinColumn(name = "board_idx"), inverseJoinColumns = @JoinColumn(name = "tag_idx"))
+    @JsonIgnore
+    private Set<Tag> tags = new HashSet<Tag>();
     
     public Board(){}
     

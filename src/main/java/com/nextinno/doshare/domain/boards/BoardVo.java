@@ -17,4 +17,5 @@ public class BoardVo {
     private String imagePath = "";
     private String content = "";
     private long userIdx = 0;
+    private String tags = "";
 }
