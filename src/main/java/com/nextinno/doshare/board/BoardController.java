@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nextinno.doshare.api.API;
-//import com.nextinno.doshare.board.mapper.BoardMapper;
+// import com.nextinno.doshare.board.mapper.BoardMapper;
 import com.nextinno.doshare.domain.boards.Board;
 import com.nextinno.doshare.domain.boards.BoardRepository;
 import com.nextinno.doshare.domain.boards.BoardVo;
@@ -55,18 +55,18 @@ public class BoardController {
     @Value("${file.uploadPath}")
     private String uploadPath;
 
-//    @Autowired
-//    private BoardMapper boardMapper;
-    
+    // @Autowired
+    // private BoardMapper boardMapper;
+
     @Autowired
     private BoardRepository boardRepository;
-    
+
     @Autowired
     private CommentRepository commentRepository;
 
     @Autowired
     private TagRepository tagRepository;
-    
+
     @RequestMapping(value = "upload/image", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<GlobalDomain> uploadImage(@RequestParam(value = "file") MultipartFile file) {
@@ -77,9 +77,9 @@ public class BoardController {
         try {
             String splitData[] = file.getOriginalFilename().split("\\.");
             String fileType = splitData[splitData.length - 1];
-            
+
             filePath = uploadPath + uuid.toString() + "." + fileType;
-            
+
             saveFile(file.getInputStream(), filePath);
 
             globalDomain.setMessage(uuid.toString() + "." + fileType);
@@ -96,31 +96,33 @@ public class BoardController {
     @ResponseBody
     public ResponseEntity uploadBoard(@RequestBody final BoardVo boardVo) {
         Board board = new Board(boardVo);
-        
+
         String tags = boardVo.getTags();
 
-        if( !tags.equals("") ){
-         // 태그들을 먼저 split한다.
-            String[] tagArray = tags.split(" ");
-           
+        if (!tags.equals("")) {
+            // 태그들을 먼저 split한다.
+            String[] tagArray = tags.split(",");
+
             for (String tagName : tagArray) {
                 // 해당하는 태그가 있다면 해당 태그의 count를 1 증가시키고, board와 맵핑한다.
-                Tag getTag = tagRepository.findByName(tagName);
-                
-                if(getTag != null){
-                    getTag.setTaggedCount(getTag.getTaggedCount() + 1);
-                    board.getTags().add(getTag);
-                } else {
-                 // 없으면 해당 태그를 만든다.
-                    Tag newTag = new Tag();
-                    newTag.setName(tagName);
-                    newTag.setTaggedCount(newTag.getTaggedCount() + 1);
-                    tagRepository.save(newTag);
-                    board.getTags().add(newTag);
+                if (!tagName.equals("")) {
+                    Tag getTag = tagRepository.findByName(tagName);
+
+                    if (getTag != null) {
+                        getTag.setTaggedCount(getTag.getTaggedCount() + 1);
+                        board.getTags().add(getTag);
+                    } else {
+                        // 없으면 해당 태그를 만든다.
+                        Tag newTag = new Tag();
+                        newTag.setName(tagName);
+                        newTag.setTaggedCount(newTag.getTaggedCount() + 1);
+                        tagRepository.save(newTag);
+                        board.getTags().add(newTag);
+                    }
                 }
             }
         }
-        
+
         boardRepository.save(board);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -130,33 +132,50 @@ public class BoardController {
     @ResponseBody
     public ResponseEntity uploadEditedBoard(@PathVariable long idx, @RequestBody final BoardVo updatedBoard) {
         Board board = boardRepository.findOne(idx);
-        board.update(updatedBoard);
-        boardRepository.save(board);
+
+        // 기존의 board를 가져와서 지우고!
+        // tag는 -1씩 카운트를 내린다.
+        // 만약 0이 될 경우 tag 테이블에서 지우면 된다.!
+        // 현재 값으로 저장하면 된다.
+        // 아래 작업은 필요 없다.
         
-        // to-do 기존과 tag Name이 같으면 안하고 다를 경우에 아래 로직을 진행 시킨다.
-        
-//        String tags = updatedBoard.getTags();
-        String tags = "java Spring";
-        
-        // 태그들을 먼저 split한다.
-        String[] tagArray = tags.split(" ");
-       
-        for (String tagName : tagArray) {
-            // 해당하는 태그가 있다면 해당 태그의 count를 1 증가시키고, board와 맵핑한다.
-            Tag getTag = tagRepository.findByName(tagName);
-            if(getTag != null){
-                getTag.setTaggedCount(getTag.getTaggedCount() + 1);
-                tagRepository.save(getTag);
-            } else {
-             // 없으면 해당 태그를 만든다.
-                Tag newTag = new Tag();
-                newTag.setName(tagName);
-                newTag.setTaggedCount(newTag.getTaggedCount() + 1);
-                newTag.getBoards().add(board);
-                tagRepository.save(newTag);
+        String savedTags = "";
+        // 아무 것도 없을 시 split ',' 을 해도 1의 값이 나오기 때문에 초기화 값은 1로 한다.
+        int savedTagsSize = 1;
+        // 1. 먼저 board의 tags의 값을 가져온다.
+
+        List<Tag> savedTagsList = board.getTags();
+        if (savedTagsList.size() != 0) {
+            for (Tag tag : savedTagsList) {
+                savedTags += tag.getName() + ",";
             }
+            savedTags = savedTags.substring(0, savedTags.length() - 1);
         }
+        // 2. client로 부터 들어온 값을 확인한다.
+        String newTags = updatedBoard.getTags().trim();
+
+        // 3. 기존의 tags 값과 신규 tags 값을 확인한다.
+        String[] newTagsArray = newTags.split(",");
         
+        // 분류 작업을 하면 될 듯 한대?
+        
+        if (newTagsArray.length == savedTagsSize) {
+            // 1. 완전히 같은 경우, 이 부분은 그냥 넘긴다.
+
+            // 2. 다른게 있을 경우
+            // 2-1. 기존의 존재하는 것에서 tag 카운트를 빼면서 board_tag에서 삭제한다.
+            // 2-2. 새로운 tag는 삽입하고, board_tag에 넣는다.
+
+        } else {
+            // 1. 다른게 있을 경우
+            // 1-1. 기존의 존재하는 것에서 tag 카운트를 빼면서 board_tag에서 삭제한다.
+            // 1-2. 새로운 tag는 삽입하고, board_tag에 넣는다.
+        }
+
+        board.update(updatedBoard);
+
+        boardRepository.save(board);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -164,7 +183,7 @@ public class BoardController {
     @RequestMapping(value = "delete/{idx}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity deleteBoard(@PathVariable String idx) {
-//        boardMapper.deleteBoard(idx);
+        // boardMapper.deleteBoard(idx);
         boardRepository.delete(Long.valueOf(idx));
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -218,25 +237,26 @@ public class BoardController {
 
         return new ResponseEntity<List<Board>>(resultBoard, HttpStatus.OK);
     }
-    
-//    @RequestMapping(value = "all", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ResponseEntity<Page<Board>> findAllBoard(@PageableDefault(direction = Direction.DESC, size = 2) Pageable pageable) {
-//        Page<Board> resultBoard = boardRepository.findAll(pageable);
-//
-//        return new ResponseEntity<Page<Board>>(resultBoard, HttpStatus.OK);
-//    }
+
+    // @RequestMapping(value = "all", method = RequestMethod.GET)
+    // @ResponseBody
+    // public ResponseEntity<Page<Board>> findAllBoard(@PageableDefault(direction = Direction.DESC,
+    // size = 2) Pageable pageable) {
+    // Page<Board> resultBoard = boardRepository.findAll(pageable);
+    //
+    // return new ResponseEntity<Page<Board>>(resultBoard, HttpStatus.OK);
+    // }
 
     @RequestMapping(value = "{idx}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Board> findById(@PathVariable long idx) {
-//        Board resultBoard = boardMapper.findById(idx);
+        // Board resultBoard = boardMapper.findById(idx);
         Board resultBoard = boardRepository.findOne(idx);
         resultBoard.setReadCount(resultBoard.getReadCount() + 1);
         // readCount를 1증가 시킨다.
-//        boardMapper.updateReadCount(resultBoard);
+        // boardMapper.updateReadCount(resultBoard);
         boardRepository.save(resultBoard);
-        //to-do select 해온 값으로 보내록 한다. 지금은 set한 값으로 주고 있다.
+        // to-do select 해온 값으로 보내록 한다. 지금은 set한 값으로 주고 있다.
         return new ResponseEntity<Board>(resultBoard, HttpStatus.OK);
     }
 
@@ -247,7 +267,7 @@ public class BoardController {
         Board board = new Board();
         board.setIdx(idx);
         comment.setBoard(board);
-        
+
         commentRepository.save(comment);
         logger.info("comment : " + comment.toString());
         return new ResponseEntity(HttpStatus.OK);
