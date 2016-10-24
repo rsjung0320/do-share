@@ -17,8 +17,6 @@ import javax.servlet.Filter;
 
 import com.nextinno.doshare.config.DoShareConfig;
 
-// @EnableAutoConfiguration(exclude = {DataSourceTransactionManagerAutoConfiguration.class,
-// DataSourceAutoConfiguration.class})
 @EnableJpaRepositories(DoShareConfig.DEFAULT_BASE_PACKAGE)
 @EntityScan(DoShareConfig.DEFAULT_BASE_PACKAGE)
 @ComponentScan(basePackages = DoShareConfig.DEFAULT_BASE_PACKAGE)
