@@ -13,3 +13,15 @@ INSERT INTO board(idx, email, title, upload_date, updated_date, read_count, imag
 INSERT INTO board(idx, email, title, upload_date, updated_date, read_count, image_path, content, user_idx) VALUES (8,'jane@nablecomm.com','test8','2016-10-07T02:45:15.452Z',NULL,3,NULL,'test8',4);
 INSERT INTO board(idx, email, title, upload_date, updated_date, read_count, image_path, content, user_idx) VALUES (9,'jane@nablecomm.com','test9','2016-10-07T02:45:15.452Z',NULL,3,NULL,'test9',4);
 INSERT INTO board(idx, email, title, upload_date, updated_date, read_count, image_path, content, user_idx) VALUES (10,'jane@nablecomm.com','test10','2016-10-07T02:45:15.452Z',NULL,3,NULL,'test10',4);
+
+INSERT INTO `comment` VALUES (1,'test1','jane@nablecomm.com',0,'2016-10-25T08:02:12.501Z',10);
+INSERT INTO `comment` VALUES (2,'2','jane@nablecomm.com',0,'2016-10-25T08:02:15.205Z',10);
+INSERT INTO `comment` VALUES (3,'3','jane@nablecomm.com',0,'2016-10-25T08:03:22.430Z',10);
+
+INSERT INTO `comment` VALUES (4,'test1','jane@nablecomm.com',0,'2016-10-25T08:02:12.501Z',9);
+INSERT INTO `comment` VALUES (5,'2','jane@nablecomm.com',0,'2016-10-25T08:02:15.205Z',9);
+INSERT INTO `comment` VALUES (6,'3','jane@nablecomm.com',0,'2016-10-25T08:03:22.430Z',9);
+
+INSERT INTO `comment` VALUES (7,'test1','jane@nablecomm.com',0,'2016-10-25T08:02:12.501Z',8);
+INSERT INTO `comment` VALUES (8,'2','jane@nablecomm.com',0,'2016-10-25T08:02:15.205Z',8);
+INSERT INTO `comment` VALUES (9,'3','jane@nablecomm.com',0,'2016-10-25T08:03:22.430Z',8);

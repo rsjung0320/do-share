@@ -269,15 +269,18 @@ public class BoardController {
         comment.setBoard(board);
 
         commentRepository.save(comment);
-        logger.info("comment : " + comment.toString());
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "comment/{idx}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<Comment>> commentFindById(@PathVariable long idx) {
+//        Board board = new Board();
+//        board.setIdx(idx);
+//        List<Comment> resultComment = commentRepository.findByBoard(board);
         List<Comment> resultComment = commentRepository.findByBoardIdx(idx);
-        logger.info("comment : " + resultComment.toString());
+        
         return new ResponseEntity<List<Comment>>(resultComment, HttpStatus.OK);
     }
 

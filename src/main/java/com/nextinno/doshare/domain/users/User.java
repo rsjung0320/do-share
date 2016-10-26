@@ -40,10 +40,10 @@ public class User {
     @Column(name = "role", nullable = false)
     private String role = "user";
     
-    @OneToMany(targetEntity=Board.class, fetch=FetchType.LAZY)
-    @JoinColumn(name="user_idx", nullable = true)
-    @JsonIgnore
-    private List<Board> boards;
+//    @OneToMany(targetEntity=Board.class, fetch=FetchType.LAZY)
+//    @JoinColumn(name="user_idx", nullable = true)
+//    @JsonIgnore
+//    private List<Board> boards;
 
     /**
      * @return the password

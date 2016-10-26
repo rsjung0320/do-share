@@ -1,9 +1,7 @@
 package com.nextinno.doshare.domain.boards;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +18,7 @@ import javax.persistence.OneToMany;
 
 import lombok.Data;
 
+import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -68,10 +67,12 @@ public class Board {
     @JsonIgnore
     private User user;
     
-    @OneToMany(targetEntity=Comment.class, fetch=FetchType.LAZY)
-    @JoinColumn(name="board_idx", nullable = true)
-    @JsonIgnore
-    private List<Comment> comments;
+//    @OneToMany(fetch=FetchType.LAZY)
+//    // JoinColumn 에서 name을 지정하면 상대 테이블에 해당 네임으로 foreign key가 생긴다.
+//    @JoinColumn(foreignKey = @ForeignKey(name="fk_comment_board"), nullable = true)
+////    @JsonManagedReference
+//    @JsonIgnore
+//    private List<Comment> comments;
     
     //
     @ManyToMany(fetch = FetchType.LAZY)
