@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,9 +53,6 @@ public class BoardController {
 
     @Value("${file.uploadPath}")
     private String uploadPath;
-
-    // @Autowired
-    // private BoardMapper boardMapper;
 
     @Autowired
     private BoardRepository boardRepository;
@@ -105,8 +101,9 @@ public class BoardController {
 
             for (String tagName : tagArray) {
                 // 해당하는 태그가 있다면 해당 태그의 count를 1 증가시키고, board와 맵핑한다.
-                if (!tagName.equals("")) {
-                    Tag getTag = tagRepository.findByName(tagName);
+                String toUpperCaseTagName = tagName.trim().toUpperCase();
+                if (!toUpperCaseTagName.equals("")) {
+                    Tag getTag = tagRepository.findByName(toUpperCaseTagName);
 
                     if (getTag != null) {
                         getTag.setTaggedCount(getTag.getTaggedCount() + 1);
@@ -114,7 +111,7 @@ public class BoardController {
                     } else {
                         // 없으면 해당 태그를 만든다.
                         Tag newTag = new Tag();
-                        newTag.setName(tagName);
+                        newTag.setName(toUpperCaseTagName);
                         newTag.setTaggedCount(newTag.getTaggedCount() + 1);
                         tagRepository.save(newTag);
                         board.getTags().add(newTag);
