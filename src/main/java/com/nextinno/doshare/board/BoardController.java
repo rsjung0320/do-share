@@ -45,6 +45,8 @@ import com.nextinno.doshare.tags.TagRepository;
  * @author rsjung
  *
  */
+
+// RestController를 사용하면 return으로 json로 해준다고 한다. 잭슨을 쓰지 않아도 됨
 @Controller
 @RequestMapping(API.BOARD)
 @Transactional(value = "transactionManager")
