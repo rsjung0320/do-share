@@ -13,8 +13,8 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -46,12 +46,13 @@ import com.nextinno.doshare.tags.TagRepository;
  *
  */
 
-// RestController를 사용하면 return으로 json로 해준다고 한다. 잭슨을 쓰지 않아도 됨
 @Controller
+// RestController를 사용하면 return으로 json로 해준다고 한다. 잭슨을 쓰지 않아도 됨
+//@RestController
 @RequestMapping(API.BOARD)
-@Transactional(value = "transactionManager")
+@Transactional
+@Slf4j
 public class BoardController {
-    private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 
     @Value("${file.uploadPath}")
     private String uploadPath;
@@ -70,7 +71,7 @@ public class BoardController {
     public ResponseEntity<GlobalDomain> uploadImage(@RequestParam(value = "file") MultipartFile file) {
         GlobalDomain globalDomain = new GlobalDomain();
         String filePath = "";
-        logger.info("name : " + file.getOriginalFilename());
+        log.info("name : " + file.getOriginalFilename());
         UUID uuid = UUID.randomUUID();
         try {
             String splitData[] = file.getOriginalFilename().split("\\.");
@@ -82,7 +83,7 @@ public class BoardController {
 
             globalDomain.setMessage(uuid.toString() + "." + fileType);
         } catch (IOException e) {
-            logger.error("uploadImage : ", e);
+            log.error("uploadImage : ", e);
             globalDomain.setMessage("uploadImage : " + e);
             return new ResponseEntity<GlobalDomain>(globalDomain, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -229,12 +230,12 @@ public class BoardController {
         out.flush();
     }
 
-    @RequestMapping(value = "all", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<List<Board>> findAllBoard() {
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public ResponseEntity findAllBoard() {
         List<Board> resultBoard = boardRepository.findAll();
 
-        return new ResponseEntity<List<Board>>(resultBoard, HttpStatus.OK);
+        
+        return new ResponseEntity<>(resultBoard, HttpStatus.OK);
     }
 
     // @RequestMapping(value = "all", method = RequestMethod.GET)
@@ -248,9 +249,12 @@ public class BoardController {
 
     @RequestMapping(value = "{idx}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Board> findById(@PathVariable long idx) {
+    public ResponseEntity<Board> findByIdBoard(@PathVariable long idx) {
         // Board resultBoard = boardMapper.findById(idx);
         Board resultBoard = boardRepository.findOne(idx);
+       
+//        resultBoard.getTags();
+        
         resultBoard.setReadCount(resultBoard.getReadCount() + 1);
         // readCount를 1증가 시킨다.
         // boardMapper.updateReadCount(resultBoard);
@@ -307,7 +311,7 @@ public class BoardController {
                 try {
                     outpuStream.close();
                 } catch (IOException e) {
-                    logger.error("outpuStream.close(). e : ", e);
+                    log.error("outpuStream.close(). e : ", e);
                 }
         }
     }

@@ -3,6 +3,7 @@ package com.nextinno.doshare.domain.boards;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,8 +18,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,6 +35,8 @@ import com.nextinno.doshare.tags.Tag;
 @Entity
 @DynamicUpdate
 @Data
+@Getter
+@Setter
 public class Board {
     // index
     @Id
@@ -67,17 +71,16 @@ public class Board {
     @JsonIgnore
     private User user;
     
-//    @OneToMany(fetch=FetchType.LAZY)
-//    // JoinColumn 에서 name을 지정하면 상대 테이블에 해당 네임으로 foreign key가 생긴다.
-//    @JoinColumn(foreignKey = @ForeignKey(name="fk_comment_board"), nullable = true)
-////    @JsonManagedReference
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    // JoinColumn 에서 name을 지정하면 상대 테이블에 해당 네임으로 foreign key가 생긴다.
+    @JoinColumn(foreignKey = @ForeignKey(name="fk_comment_board"), nullable = true)
 //    @JsonIgnore
-//    private List<Comment> comments;
+    private List<Comment> comments;
     
     //
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "board_tag", joinColumns = @JoinColumn(name = "board_idx"), inverseJoinColumns = @JoinColumn(name = "tag_idx"))
-    @JsonIgnore
+//    @JsonIgnore
     private List<Tag> tags = new ArrayList<Tag>();
     
     public Board(){}
