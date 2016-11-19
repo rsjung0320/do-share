@@ -20,5 +20,4 @@ import com.nextinno.doshare.domain.boards.Board;
 public interface CommentRepository extends JpaRepository<Comment, Long>{
     List<Comment> findByIdx(long idx);
     List<Comment> findByBoardIdx(long board_idx);
-    List<Comment> findByBoard(Board board);
 }

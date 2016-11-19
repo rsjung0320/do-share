@@ -9,12 +9,14 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.nextinno.doshare.api.API;
 // import com.nextinno.doshare.board.mapper.BoardMapper;
 import com.nextinno.doshare.domain.boards.Board;
+import com.nextinno.doshare.domain.boards.BoardDto;
 import com.nextinno.doshare.domain.boards.BoardRepository;
 import com.nextinno.doshare.domain.boards.BoardVo;
 import com.nextinno.doshare.domain.comments.Comment;
@@ -48,7 +51,7 @@ import com.nextinno.doshare.tags.TagRepository;
 
 @Controller
 // RestController를 사용하면 return으로 json로 해준다고 한다. 잭슨을 쓰지 않아도 됨
-//@RestController
+// @RestController
 @RequestMapping(API.BOARD)
 @Transactional
 @Slf4j
@@ -65,6 +68,9 @@ public class BoardController {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @RequestMapping(value = "upload/image", method = RequestMethod.POST)
     @ResponseBody
@@ -138,7 +144,7 @@ public class BoardController {
         // 만약 0이 될 경우 tag 테이블에서 지우면 된다.!
         // 현재 값으로 저장하면 된다.
         // 아래 작업은 필요 없다.
-        
+
         String savedTags = "";
         // 아무 것도 없을 시 split ',' 을 해도 1의 값이 나오기 때문에 초기화 값은 1로 한다.
         int savedTagsSize = 1;
@@ -156,9 +162,9 @@ public class BoardController {
 
         // 3. 기존의 tags 값과 신규 tags 값을 확인한다.
         String[] newTagsArray = newTags.split(",");
-        
+
         // 분류 작업을 하면 될 듯 한대?
-        
+
         if (newTagsArray.length == savedTagsSize) {
             // 1. 완전히 같은 경우, 이 부분은 그냥 넘긴다.
 
@@ -234,8 +240,11 @@ public class BoardController {
     public ResponseEntity findAllBoard() {
         List<Board> resultBoard = boardRepository.findAll();
 
-        
-        return new ResponseEntity<>(resultBoard, HttpStatus.OK);
+        List<BoardDto.boardList> boardList =
+                resultBoard.stream().map(board -> modelMapper.map(board, BoardDto.boardList.class))
+                        .collect(Collectors.toList());
+        // modelMapper.map(board, destinationType)
+        return new ResponseEntity<>(boardList, HttpStatus.OK);
     }
 
     // @RequestMapping(value = "all", method = RequestMethod.GET)
@@ -247,43 +256,44 @@ public class BoardController {
     // return new ResponseEntity<Page<Board>>(resultBoard, HttpStatus.OK);
     // }
 
+    @SuppressWarnings("rawtypes")
     @RequestMapping(value = "{idx}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Board> findByIdBoard(@PathVariable long idx) {
+    public ResponseEntity findByIdBoard(@PathVariable long idx) {
         // Board resultBoard = boardMapper.findById(idx);
-        Board resultBoard = boardRepository.findOne(idx);
-       
-//        resultBoard.getTags();
-        
-        resultBoard.setReadCount(resultBoard.getReadCount() + 1);
+        Board board = boardRepository.findOne(idx);
+
+        // resultBoard.getTags();
+        board.setReadCount(board.getReadCount() + 1);
         // readCount를 1증가 시킨다.
         // boardMapper.updateReadCount(resultBoard);
-        boardRepository.save(resultBoard);
+        Board resultBoard = boardRepository.save(board);
+        
         // to-do select 해온 값으로 보내록 한다. 지금은 set한 값으로 주고 있다.
-        return new ResponseEntity<Board>(resultBoard, HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(resultBoard, BoardDto.board.class), HttpStatus.OK);
     }
 
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "comment/{idx}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity addComment(@RequestBody final Comment comment, @PathVariable long idx) {
-        Board board = new Board();
-        board.setIdx(idx);
+        Board board = boardRepository.findOne(idx);
+        
         comment.setBoard(board);
 
         commentRepository.save(comment);
-
+        
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "comment/{idx}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<Comment>> commentFindById(@PathVariable long idx) {
-//        Board board = new Board();
-//        board.setIdx(idx);
-//        List<Comment> resultComment = commentRepository.findByBoard(board);
+        // Board board = new Board();
+        // board.setIdx(idx);
+        // List<Comment> resultComment = commentRepository.findByBoard(board);
         List<Comment> resultComment = commentRepository.findByBoardIdx(idx);
-        
+
         return new ResponseEntity<List<Comment>>(resultComment, HttpStatus.OK);
     }
 

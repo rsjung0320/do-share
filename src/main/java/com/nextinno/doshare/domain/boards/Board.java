@@ -61,31 +61,28 @@ public class Board {
     @Column(name = "image_path")
     private String imagePath = "";
     // 글 태그
-//    @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
+    // @Column(name = "content", nullable = false, columnDefinition = "mediumtext")
     @Lob
     @Column(name = "content", nullable = false)
     private String content = "";
     // user의 idx
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    @JsonIgnore
     private User user;
-    
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+
     // JoinColumn 에서 name을 지정하면 상대 테이블에 해당 네임으로 foreign key가 생긴다.
-    @JoinColumn(foreignKey = @ForeignKey(name="fk_comment_board"), nullable = true)
-//    @JsonIgnore
-    private List<Comment> comments;
-    
-    //
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name="board_idx",foreignKey = @ForeignKey(name = "fk_comment_board"), nullable = true)
+    private List<Comment> comments = new ArrayList<Comment>();
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "board_tag", joinColumns = @JoinColumn(name = "board_idx"), inverseJoinColumns = @JoinColumn(name = "tag_idx"))
-//    @JsonIgnore
+    @JoinTable(name = "board_tag", joinColumns = @JoinColumn(name = "board_idx"), inverseJoinColumns = @JoinColumn(
+            name = "tag_idx"))
     private List<Tag> tags = new ArrayList<Tag>();
-    
-    public Board(){}
-    
-    public Board(BoardVo boardVo){
+
+    public Board() {}
+
+    public Board(BoardVo boardVo) {
         super();
         this.title = boardVo.getTitle();
         this.email = boardVo.getEmail();
@@ -106,6 +103,5 @@ public class Board {
         this.updatedDate = updatedBoard.getUpdatedDate();
         this.content = updatedBoard.getContent();
     }
-    
-}
 
+}

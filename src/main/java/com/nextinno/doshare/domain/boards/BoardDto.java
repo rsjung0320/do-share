@@ -9,6 +9,7 @@ package com.nextinno.doshare.domain.boards;
 
 import java.util.List;
 
+import com.nextinno.doshare.domain.comments.Comment;
 import com.nextinno.doshare.domain.users.User;
 import com.nextinno.doshare.tags.Tag;
 
@@ -20,6 +21,7 @@ import lombok.Data;
  */
 
 public class BoardDto {
+    
     @Data
     public static class boardList{
         private long idx = 0;
@@ -31,14 +33,15 @@ public class BoardDto {
     }
     
     @Data
-    public static class boardDetail{
+    public static class board{
+        private long idx = 0;
         private String title = "";
         private String email = "";
         private String uploadDate = "";
         private String updatedDate = ""; 
         private int readCount = 0;
         private String content = "";
-        private User user = null;
+        private List<Comment> comments = null;
         private List<Tag> tags = null;
     }
 }

@@ -37,7 +37,6 @@ public class Comment {
     
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name="fk_board_comment"), name="board_idx", nullable = false)
-//    @JsonBackReference
     @JsonIgnore
     private Board board;
 }
