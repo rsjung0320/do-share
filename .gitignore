@@ -3,3 +3,7 @@
 /.classpath
 /.project
 /.apt_generated/
+*.iml
+*.ipr
+*.iws
+.idea/

@@ -34,12 +34,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.nextinno.doshare.api.API;
 // import com.nextinno.doshare.board.mapper.BoardMapper;
-import com.nextinno.doshare.domain.boards.Board;
-import com.nextinno.doshare.domain.boards.BoardDto;
-import com.nextinno.doshare.domain.boards.BoardRepository;
-import com.nextinno.doshare.domain.boards.BoardVo;
-import com.nextinno.doshare.domain.comments.Comment;
-import com.nextinno.doshare.domain.comments.CommentRepository;
+import com.nextinno.doshare.comment.Comment;
+import com.nextinno.doshare.comment.CommentRepository;
 import com.nextinno.doshare.global.domain.GlobalDomain;
 import com.nextinno.doshare.tags.Tag;
 import com.nextinno.doshare.tags.TagRepository;
@@ -243,7 +239,6 @@ public class BoardController {
         List<BoardDto.boardList> boardList =
                 resultBoard.stream().map(board -> modelMapper.map(board, BoardDto.boardList.class))
                         .collect(Collectors.toList());
-        // modelMapper.map(board, destinationType)
         return new ResponseEntity<>(boardList, HttpStatus.OK);
     }
 

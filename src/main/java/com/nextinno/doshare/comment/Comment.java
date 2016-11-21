@@ -1,4 +1,4 @@
-package com.nextinno.doshare.domain.comments;
+package com.nextinno.doshare.comment;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,12 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.ForeignKey;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
-
 import lombok.Data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nextinno.doshare.domain.boards.Board;
+import com.nextinno.doshare.board.Board;
 
 /**
  * @author rsjung

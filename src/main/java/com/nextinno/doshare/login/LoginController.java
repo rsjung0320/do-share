@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.common.Common;
 import com.nextinno.doshare.domain.tokens.Token;
-import com.nextinno.doshare.domain.users.User;
-import com.nextinno.doshare.domain.users.UserRepository;
+import com.nextinno.doshare.user.User;
+import com.nextinno.doshare.user.UserRepository;
 import com.nextinno.doshare.global.domain.GlobalDomain;
 
 /**

@@ -5,12 +5,11 @@
  * This software is confidential and proprietary information
  * of Nable Communications, Inc.
  */
-package com.nextinno.doshare.domain.boards;
+package com.nextinno.doshare.board;
 
 import java.util.List;
 
-import com.nextinno.doshare.domain.comments.Comment;
-import com.nextinno.doshare.domain.users.User;
+import com.nextinno.doshare.comment.Comment;
 import com.nextinno.doshare.tags.Tag;
 
 import lombok.Data;

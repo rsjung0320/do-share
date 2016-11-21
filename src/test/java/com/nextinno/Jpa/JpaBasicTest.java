@@ -6,28 +6,23 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nextinno.doshare.domain.boards.BoardDto;
-import com.nextinno.doshare.domain.boards.BoardRepository;
+import com.nextinno.doshare.board.BoardDto;
+import com.nextinno.doshare.board.BoardRepository;
 import com.nextinno.doshare.main.Main;
 
 /**
  * @author rsjung
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Main.class)
 @WebAppConfiguration
 @Transactional // @Test로 붙은 것들을 한번 실행 시킨 후 rollback을 한다.
@@ -51,9 +46,9 @@ public class JpaBasicTest {
      */
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-//                .addFilter(springSecurityFilterChain)
-                .build();
+//        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+////                .addFilter(springSecurityFilterChain)
+//                .build();
     }
 
     @Test

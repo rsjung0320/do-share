@@ -1,10 +1,7 @@
-package com.nextinno.doshare.domain.boards;
+package com.nextinno.doshare.board;
 
-import java.util.List;
-
+import com.nextinno.doshare.board.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.nextinno.doshare.domain.comments.Comment;
 
 /**
  * @author rsjung

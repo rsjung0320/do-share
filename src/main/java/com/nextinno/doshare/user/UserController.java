@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nextinno.doshare.api.API;
-import com.nextinno.doshare.domain.users.User;
-import com.nextinno.doshare.domain.users.UserRepository;
 
 /**
  * @author rsjung

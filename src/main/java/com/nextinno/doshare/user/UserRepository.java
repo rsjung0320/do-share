@@ -1,4 +1,4 @@
-package com.nextinno.doshare.domain.users;
+package com.nextinno.doshare.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

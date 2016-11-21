@@ -1,9 +1,6 @@
 package com.nextinno.doshare.main;
 
-import java.nio.charset.Charset;
-
-import javax.servlet.Filter;
-
+import com.nextinno.doshare.config.DoShareConfig;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.nextinno.doshare.config.DoShareConfig;
+import javax.servlet.Filter;
+import java.nio.charset.Charset;
 
 @EnableJpaRepositories(DoShareConfig.DEFAULT_BASE_PACKAGE)
 @EntityScan(DoShareConfig.DEFAULT_BASE_PACKAGE)
@@ -58,9 +56,7 @@ public class Main {
     }
     
     @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
+    public ModelMapper modelMapper() { return new ModelMapper(); }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

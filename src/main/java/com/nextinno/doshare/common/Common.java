@@ -34,6 +34,11 @@ public class Common {
         return claims;
     }
 
+    /**
+     * 토큰으로 부터 username을 가져온다.
+     * @param token
+     * @return
+     */
     public String getUsernameFromToken(String token) {
         String username;
         try {

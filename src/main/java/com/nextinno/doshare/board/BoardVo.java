@@ -1,4 +1,4 @@
-package com.nextinno.doshare.domain.boards;
+package com.nextinno.doshare.board;
 
 import lombok.Data;
 

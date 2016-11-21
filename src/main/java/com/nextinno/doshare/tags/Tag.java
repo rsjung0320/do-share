@@ -14,7 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nextinno.doshare.domain.boards.Board;
+import com.nextinno.doshare.board.Board;
 
 import lombok.Data;
 

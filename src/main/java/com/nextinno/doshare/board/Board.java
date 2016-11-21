@@ -1,4 +1,4 @@
-package com.nextinno.doshare.domain.boards;
+package com.nextinno.doshare.board;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,8 @@ import lombok.Setter;
 
 import org.hibernate.annotations.DynamicUpdate;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nextinno.doshare.domain.comments.Comment;
-import com.nextinno.doshare.domain.users.User;
+import com.nextinno.doshare.comment.Comment;
+import com.nextinno.doshare.user.User;
 import com.nextinno.doshare.tags.Tag;
 
 /**
