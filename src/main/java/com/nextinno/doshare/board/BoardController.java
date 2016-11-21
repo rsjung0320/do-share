@@ -236,8 +236,8 @@ public class BoardController {
     public ResponseEntity findAllBoard() {
         List<Board> resultBoard = boardRepository.findAll();
 
-        List<BoardDto.boardList> boardList =
-                resultBoard.stream().map(board -> modelMapper.map(board, BoardDto.boardList.class))
+        List<BoardDto.ResponseBoardList> boardList =
+                resultBoard.stream().map(board -> modelMapper.map(board, BoardDto.ResponseBoardList.class))
                         .collect(Collectors.toList());
         return new ResponseEntity<>(boardList, HttpStatus.OK);
     }
@@ -265,7 +265,7 @@ public class BoardController {
         Board resultBoard = boardRepository.save(board);
         
         // to-do select 해온 값으로 보내록 한다. 지금은 set한 값으로 주고 있다.
-        return new ResponseEntity<>(modelMapper.map(resultBoard, BoardDto.board.class), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(resultBoard, BoardDto.ResponseBoard.class), HttpStatus.OK);
     }
 
     @SuppressWarnings("rawtypes")

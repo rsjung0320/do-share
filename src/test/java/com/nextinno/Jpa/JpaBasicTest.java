@@ -54,7 +54,7 @@ public class JpaBasicTest {
     @Test
     public void boardRepository가_있는지_확인() {
         
-        BoardDto.boardList boardList= BoardCreate();
+        BoardDto.ResponseBoardList boardList= BoardCreate();
         
         System.out.println("boardList : " + boardList);
         int count = (int) boardRepository.count();
@@ -83,8 +83,8 @@ public class JpaBasicTest {
     /**
      * 
      */
-    private BoardDto.boardList BoardCreate() {
-        BoardDto.boardList boardList = new BoardDto.boardList();
+    private BoardDto.ResponseBoardList BoardCreate() {
+        BoardDto.ResponseBoardList boardList = new BoardDto.ResponseBoardList();
         
         boardList.setEmail("rsjung@nablecomm.com");
         boardList.setReadCount(7);

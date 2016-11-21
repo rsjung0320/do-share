@@ -22,7 +22,7 @@ import lombok.Data;
 public class BoardDto {
     
     @Data
-    public static class boardList{
+    public static class ResponseBoardList{
         private long idx = 0;
         private String title = "";
         private String email = "";
@@ -32,7 +32,7 @@ public class BoardDto {
     }
     
     @Data
-    public static class board{
+    public static class ResponseBoard{
         private long idx = 0;
         private String title = "";
         private String email = "";
