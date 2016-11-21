@@ -20,7 +20,21 @@ import lombok.Data;
  */
 
 public class BoardDto {
-    
+
+    @Data
+    public static class Board{
+        private long idx = 0;
+        private String title = "";
+        private String email = "";
+        private String uploadDate = "";
+        private String updatedDate = "";
+        private int readCount = 0;
+        private String imagePath = "";
+        private String content = "";
+        private long userIdx = 0;
+        private String tags = "";
+    }
+
     @Data
     public static class ResponseBoardList{
         private long idx = 0;

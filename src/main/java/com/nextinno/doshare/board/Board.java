@@ -81,23 +81,23 @@ public class Board {
 
     public Board() {}
 
-    public Board(BoardVo boardVo) {
+    public Board(BoardDto.Board board) {
         super();
-        this.title = boardVo.getTitle();
-        this.email = boardVo.getEmail();
-        this.uploadDate = boardVo.getUploadDate();
-        this.updatedDate = boardVo.getUpdatedDate();
-        this.readCount = boardVo.getReadCount();
-        this.imagePath = boardVo.getImagePath();
-        this.content = boardVo.getContent();
+        this.title = board.getTitle();
+        this.email = board.getEmail();
+        this.uploadDate = board.getUploadDate();
+        this.updatedDate = board.getUpdatedDate();
+        this.readCount = board.getReadCount();
+        this.imagePath = board.getImagePath();
+        this.content = board.getContent();
         this.user = new User();
-        user.setIdx(boardVo.getUserIdx());
+        user.setIdx(board.getUserIdx());
     }
 
     /**
      * @param updatedBoard
      */
-    public void update(BoardVo updatedBoard) {
+    public void update(BoardDto.Board updatedBoard) {
         this.title = updatedBoard.getTitle();
         this.updatedDate = updatedBoard.getUpdatedDate();
         this.content = updatedBoard.getContent();

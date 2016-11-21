@@ -95,7 +95,7 @@ public class BoardController {
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "upload/board", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity uploadBoard(@RequestBody final BoardVo boardVo) {
+    public ResponseEntity uploadBoard(@RequestBody final BoardDto.Board boardVo) {
         Board board = new Board(boardVo);
 
         String tags = boardVo.getTags();
@@ -132,7 +132,7 @@ public class BoardController {
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "upload/edited/board/{idx}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity uploadEditedBoard(@PathVariable long idx, @RequestBody final BoardVo updatedBoard) {
+    public ResponseEntity uploadEditedBoard(@PathVariable long idx, @RequestBody final BoardDto.Board updatedBoard) {
         Board board = boardRepository.findOne(idx);
 
         // 기존의 board를 가져와서 지우고!
