@@ -31,7 +31,6 @@ public class BoardDto {
         private String email = "";
         private Date uploadDate;
         private Date updatedDate;
-        private int readCount = 0;
         @NotBlank
         private String content = "";
         @NotNull

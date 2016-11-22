@@ -122,8 +122,8 @@ public class BoardController {
             }
         }
 
-        boardRepository.save(board);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Board resultBoard = boardRepository.save(board);
+        return new ResponseEntity<>(resultBoard, HttpStatus.OK);
     }
 
     @RequestMapping(value = "upload/edited/board/{idx}", method = POST)
@@ -275,9 +275,9 @@ public class BoardController {
     public ResponseEntity addComment(@RequestBody final Comment comment, @PathVariable long idx) {
         Board board = boardRepository.findOne(idx);
 
-        commentService.addComment(board, comment);
+        Comment result = commentService.addComment(board, comment);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value = "comment/{idx}", method = GET)

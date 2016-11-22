@@ -79,7 +79,6 @@ public class Board {
         Date now = new Date();
         this.uploadDate = now;
         this.updatedDate = now;
-        this.readCount = board.getReadCount();
         this.content = board.getContent();
         this.user = new User();
         user.setIdx(board.getUserIdx());
