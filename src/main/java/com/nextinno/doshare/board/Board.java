@@ -1,21 +1,10 @@
 package com.nextinno.doshare.board;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.Getter;
@@ -49,10 +38,12 @@ public class Board {
     private String email = "";
     // 글 쓴 날짜
     @Column(name = "upload_date", nullable = false)
-    private String uploadDate = "";
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date uploadDate;
     // 최종 수정
     @Column(name = "updated_date")
-    private String updatedDate = "";
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
     // 조회 수
     @Column(name = "read_count")
     private int readCount = 0;
@@ -79,16 +70,16 @@ public class Board {
             name = "tag_idx"))
     private List<Tag> tags = new ArrayList<Tag>();
 
-    public Board() {}
+    public Board(){}
 
-    public Board(BoardDto.Board board) {
+    public Board(BoardDto.CreateBoard board) {
         super();
         this.title = board.getTitle();
         this.email = board.getEmail();
-        this.uploadDate = board.getUploadDate();
-        this.updatedDate = board.getUpdatedDate();
+        Date now = new Date();
+        this.uploadDate = now;
+        this.updatedDate = now;
         this.readCount = board.getReadCount();
-        this.imagePath = board.getImagePath();
         this.content = board.getContent();
         this.user = new User();
         user.setIdx(board.getUserIdx());
@@ -97,9 +88,10 @@ public class Board {
     /**
      * @param updatedBoard
      */
-    public void update(BoardDto.Board updatedBoard) {
+    public void update(BoardDto.UpdateBoard updatedBoard) {
         this.title = updatedBoard.getTitle();
-        this.updatedDate = updatedBoard.getUpdatedDate();
+        Date now = new Date();
+        this.updatedDate = now;
         this.content = updatedBoard.getContent();
     }
 

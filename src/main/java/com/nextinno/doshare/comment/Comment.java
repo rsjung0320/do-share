@@ -1,18 +1,13 @@
 package com.nextinno.doshare.comment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.ForeignKey;
+import javax.persistence.*;
 
 import lombok.Data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nextinno.doshare.board.Board;
+
+import java.util.Date;
 
 /**
  * @author rsjung
@@ -27,7 +22,8 @@ public class Comment {
     @Column(name = "email", nullable = false)
     private String email = "";
     @Column(name = "upload_date", nullable = false)
-    private String uploadDate = "";
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date uploadDate;
     @Column(name = "good_count")
     private int goodCount = 0;
     @Column(name = "content", nullable = false, columnDefinition = "mediumtext")

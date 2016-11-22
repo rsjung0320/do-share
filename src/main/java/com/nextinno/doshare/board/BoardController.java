@@ -1,21 +1,14 @@
 package com.nextinno.doshare.board;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URLEncoder;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.nextinno.doshare.api.API;
+import com.nextinno.doshare.comment.Comment;
+import com.nextinno.doshare.comment.CommentRepository;
+import com.nextinno.doshare.comment.CommentService;
+import com.nextinno.doshare.comment.CommentServiceImpl;
+import com.nextinno.doshare.global.domain.GlobalDomain;
+import com.nextinno.doshare.tags.Tag;
+import com.nextinno.doshare.tags.TagRepository;
 import lombok.extern.slf4j.Slf4j;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,33 +17,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.nextinno.doshare.api.API;
-// import com.nextinno.doshare.board.mapper.BoardMapper;
-import com.nextinno.doshare.comment.Comment;
-import com.nextinno.doshare.comment.CommentRepository;
-import com.nextinno.doshare.global.domain.GlobalDomain;
-import com.nextinno.doshare.tags.Tag;
-import com.nextinno.doshare.tags.TagRepository;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.*;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * @author rsjung
- *
  */
-
+// @RestController를 사용하면 return으로 json로 해준다고 한다. 잭슨을 쓰지 않아도 됨
 @Controller
-// RestController를 사용하면 return으로 json로 해준다고 한다. 잭슨을 쓰지 않아도 됨
-// @RestController
-@RequestMapping(API.BOARD)
 @Transactional
 @Slf4j
+@RequestMapping(API.BOARD)
 public class BoardController {
 
     @Value("${file.uploadPath}")
@@ -68,11 +57,15 @@ public class BoardController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @RequestMapping(value = "upload/image", method = RequestMethod.POST)
+    @Autowired
+    private CommentServiceImpl commentService;
+
+    @RequestMapping(value = "upload/image", method = POST)
     @ResponseBody
     public ResponseEntity<GlobalDomain> uploadImage(@RequestParam(value = "file") MultipartFile file) {
         GlobalDomain globalDomain = new GlobalDomain();
         String filePath = "";
+
         log.info("name : " + file.getOriginalFilename());
         UUID uuid = UUID.randomUUID();
         try {
@@ -92,10 +85,14 @@ public class BoardController {
         return new ResponseEntity<GlobalDomain>(globalDomain, HttpStatus.OK);
     }
 
-    @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "upload/board", method = RequestMethod.POST)
+    @RequestMapping(value = "upload/board", method = POST)
     @ResponseBody
-    public ResponseEntity uploadBoard(@RequestBody final BoardDto.Board boardVo) {
+    public ResponseEntity uploadBoard(@RequestBody @Valid final BoardDto.CreateBoard boardVo, BindingResult result) {
+
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         Board board = new Board(boardVo);
 
         String tags = boardVo.getTags();
@@ -126,13 +123,17 @@ public class BoardController {
         }
 
         boardRepository.save(board);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "upload/edited/board/{idx}", method = RequestMethod.POST)
+    @RequestMapping(value = "upload/edited/board/{idx}", method = POST)
     @ResponseBody
-    public ResponseEntity uploadEditedBoard(@PathVariable long idx, @RequestBody final BoardDto.Board updatedBoard) {
+    public ResponseEntity uploadEditedBoard(@PathVariable long idx, @RequestBody @Valid final BoardDto.UpdateBoard updatedBoard, BindingResult result) {
+
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         Board board = boardRepository.findOne(idx);
 
         // 기존의 board를 가져와서 지우고!
@@ -178,11 +179,11 @@ public class BoardController {
 
         boardRepository.save(board);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "delete/{idx}", method = RequestMethod.GET)
+    @RequestMapping(value = "delete/{idx}", method = GET)
     @ResponseBody
     public ResponseEntity deleteBoard(@PathVariable String idx) {
         // boardMapper.deleteBoard(idx);
@@ -190,7 +191,7 @@ public class BoardController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "download/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "download/{name}", method = GET)
     @ResponseBody
     public void download(@PathVariable String name, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -232,7 +233,7 @@ public class BoardController {
         out.flush();
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/all", method = GET)
     public ResponseEntity findAllBoard() {
         List<Board> resultBoard = boardRepository.findAll();
 
@@ -252,7 +253,7 @@ public class BoardController {
     // }
 
     @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "{idx}", method = RequestMethod.GET)
+    @RequestMapping(value = "{idx}", method = GET)
     @ResponseBody
     public ResponseEntity findByIdBoard(@PathVariable long idx) {
         // Board resultBoard = boardMapper.findById(idx);
@@ -263,25 +264,23 @@ public class BoardController {
         // readCount를 1증가 시킨다.
         // boardMapper.updateReadCount(resultBoard);
         Board resultBoard = boardRepository.save(board);
-        
+
         // to-do select 해온 값으로 보내록 한다. 지금은 set한 값으로 주고 있다.
         return new ResponseEntity<>(modelMapper.map(resultBoard, BoardDto.ResponseBoard.class), HttpStatus.OK);
     }
 
     @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "comment/{idx}", method = RequestMethod.POST)
+    @RequestMapping(value = "comment/{idx}", method = POST)
     @ResponseBody
     public ResponseEntity addComment(@RequestBody final Comment comment, @PathVariable long idx) {
         Board board = boardRepository.findOne(idx);
-        
-        comment.setBoard(board);
 
-        commentRepository.save(comment);
-        
-        return new ResponseEntity(HttpStatus.OK);
+        commentService.addComment(board, comment);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "comment/{idx}", method = RequestMethod.GET)
+    @RequestMapping(value = "comment/{idx}", method = GET)
     @ResponseBody
     public ResponseEntity<List<Comment>> commentFindById(@PathVariable long idx) {
         // Board board = new Board();

@@ -7,31 +7,43 @@
  */
 package com.nextinno.doshare.board;
 
+import java.util.Date;
 import java.util.List;
 
 import com.nextinno.doshare.comment.Comment;
 import com.nextinno.doshare.tags.Tag;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @author rsjung
  *
  */
-
 public class BoardDto {
+    @Data
+    public static class CreateBoard{
+        @NotBlank
+        private String title = "";
+        @NotBlank
+        private String email = "";
+        private Date uploadDate;
+        private Date updatedDate;
+        private int readCount = 0;
+        @NotBlank
+        private String content = "";
+        @NotBlank
+        private long userIdx = 0;
+        private String tags = "";
+    }
 
     @Data
-    public static class Board{
-        private long idx = 0;
+    public static class UpdateBoard{
+        @NotBlank
         private String title = "";
-        private String email = "";
-        private String uploadDate = "";
-        private String updatedDate = "";
-        private int readCount = 0;
-        private String imagePath = "";
+        private Date updatedDate;
+        @NotBlank
         private String content = "";
-        private long userIdx = 0;
         private String tags = "";
     }
 
