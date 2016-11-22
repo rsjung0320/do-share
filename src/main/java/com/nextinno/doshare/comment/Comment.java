@@ -18,7 +18,7 @@ import java.util.Date;
 public class Comment {
     @Id
     @GeneratedValue
-    private long idx = 0;
+    private Long idx;
     @Column(name = "email", nullable = false)
     private String email = "";
     @Column(name = "upload_date", nullable = false)

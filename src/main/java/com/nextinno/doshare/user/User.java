@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class User {
     @Id
     @GeneratedValue
-    private long idx;
+    private Long idx;
     
     @Column(name = "email", nullable = false, unique=true)
     private String email = "";

@@ -27,7 +27,7 @@ import lombok.Data;
 public class Tag {
     @Id
     @GeneratedValue
-    private long idx;
+    private Long idx;
     
     @Column(name = "name", length = 50, nullable = false)
     private String name;

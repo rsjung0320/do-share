@@ -29,7 +29,7 @@ public class Board {
     // index
     @Id
     @GeneratedValue
-    private long idx = 0;
+    private Long idx;
     // 글 제목
     @Column(name = "title", nullable = false)
     private String title = "";

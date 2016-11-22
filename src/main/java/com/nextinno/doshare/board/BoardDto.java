@@ -16,6 +16,8 @@ import com.nextinno.doshare.tags.Tag;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author rsjung
  *
@@ -32,8 +34,8 @@ public class BoardDto {
         private int readCount = 0;
         @NotBlank
         private String content = "";
-        @NotBlank
-        private long userIdx = 0;
+        @NotNull
+        private Long userIdx;
         private String tags = "";
     }
 
@@ -49,7 +51,7 @@ public class BoardDto {
 
     @Data
     public static class ResponseBoardList{
-        private long idx = 0;
+        private Long idx;
         private String title = "";
         private String email = "";
         private String uploadDate = "";
@@ -59,7 +61,7 @@ public class BoardDto {
     
     @Data
     public static class ResponseBoard{
-        private long idx = 0;
+        private Long idx;
         private String title = "";
         private String email = "";
         private String uploadDate = "";
