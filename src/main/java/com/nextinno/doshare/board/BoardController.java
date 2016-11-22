@@ -3,7 +3,6 @@ package com.nextinno.doshare.board;
 import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.comment.Comment;
 import com.nextinno.doshare.comment.CommentRepository;
-import com.nextinno.doshare.comment.CommentService;
 import com.nextinno.doshare.comment.CommentServiceImpl;
 import com.nextinno.doshare.global.domain.GlobalDomain;
 import com.nextinno.doshare.tags.Tag;
@@ -30,7 +29,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author rsjung
@@ -282,13 +282,9 @@ public class BoardController {
 
     @RequestMapping(value = "comment/{idx}", method = GET)
     @ResponseBody
-    public ResponseEntity<List<Comment>> commentFindById(@PathVariable long idx) {
-        // Board board = new Board();
-        // board.setIdx(idx);
-        // List<Comment> resultComment = commentRepository.findByBoard(board);
+    public ResponseEntity commentFindById(@PathVariable long idx) {
         List<Comment> resultComment = commentRepository.findByBoardIdx(idx);
-
-        return new ResponseEntity<List<Comment>>(resultComment, HttpStatus.OK);
+        return new ResponseEntity<>(resultComment, HttpStatus.OK);
     }
 
     public void saveFile(InputStream uploadedInputStream, String serverLocation) throws IOException {
