@@ -77,15 +77,15 @@ public class BoardControllerTest {
         vo.setTags("Java, Spring");
 
         ResultActions result = mockMvc.perform(post("/api/v1/board/upload/board")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(vo)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(vo)));
 
         result.andDo(print());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.title", is("test")));
     }
 
-//    @Test
+    //    @Test
 //    public void uploadEditedBoard() throws Exception {
 //
 //    }
@@ -105,6 +105,13 @@ public class BoardControllerTest {
 //
 //    }
 //
+    @Test
+    public void findAllBoardPage() throws Exception {
+        ResultActions result = mockMvc.perform(get("/api/v1/board/all?size=3&page=1"));
+
+        result.andDo(print());
+        result.andExpect(status().isOk());
+    }
 //    @Test
 //    public void findByIdBoard() throws Exception {
 //

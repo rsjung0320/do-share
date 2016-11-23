@@ -2,7 +2,7 @@ package com.nextinno.doshare.comment;
 
 import com.nextinno.doshare.board.Board;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * Created by rsjung on 2016-11-22.
  */
-@Component
+@Service
 @Transactional
 public class CommentServiceImpl implements CommentService {
 

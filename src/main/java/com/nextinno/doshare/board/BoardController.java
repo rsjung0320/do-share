@@ -11,6 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -233,24 +238,23 @@ public class BoardController {
         out.flush();
     }
 
-    @RequestMapping(value = "/all", method = GET)
-    public ResponseEntity findAllBoard() {
-        List<Board> resultBoard = boardRepository.findAll();
+    /**
+     * page 및 size에 맞게 boardList를 주는 API
+     * ex) http://localhost:8080/all?size=2&page=0&sort=id,desc
+     * @param pageable
+     * @return
+     */
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity findAllBoardPage(@PageableDefault(direction = Direction.DESC) Pageable pageable) {
+        Page<Board> page = boardRepository.findAll(pageable);
 
-        List<BoardDto.ResponseBoardList> boardList =
-                resultBoard.stream().map(board -> modelMapper.map(board, BoardDto.ResponseBoardList.class))
-                        .collect(Collectors.toList());
-        return new ResponseEntity<>(boardList, HttpStatus.OK);
+        List<BoardDto.ResponseBoardList> content = page.getContent().parallelStream()
+                .map(board -> modelMapper.map(board, BoardDto.ResponseBoardList.class))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new PageImpl<>(content, pageable, page.getTotalElements()), HttpStatus.OK);
     }
-
-    // @RequestMapping(value = "all", method = RequestMethod.GET)
-    // @ResponseBody
-    // public ResponseEntity<Page<Board>> findAllBoard(@PageableDefault(direction = Direction.DESC,
-    // size = 2) Pageable pageable) {
-    // Page<Board> resultBoard = boardRepository.findAll(pageable);
-    //
-    // return new ResponseEntity<Page<Board>>(resultBoard, HttpStatus.OK);
-    // }
 
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "{idx}", method = GET)
