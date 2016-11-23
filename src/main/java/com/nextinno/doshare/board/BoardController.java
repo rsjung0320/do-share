@@ -246,7 +246,7 @@ public class BoardController {
      */
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity findAllBoardPage(@PageableDefault(direction = Direction.DESC) Pageable pageable) {
+    public ResponseEntity findAllBoardPage(@PageableDefault(sort="uploadDate", direction = Direction.DESC) Pageable pageable) {
         Page<Board> page = boardRepository.findAll(pageable);
 
         List<BoardDto.ResponseBoardList> content = page.getContent().parallelStream()
