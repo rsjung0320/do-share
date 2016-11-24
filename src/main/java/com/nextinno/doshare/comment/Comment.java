@@ -31,6 +31,12 @@ public class Comment {
     
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name="fk_board_comment"), name="board_idx", nullable = false)
-    @JsonIgnore
     private Board board;
+
+    public Comment(){};
+    public Comment(CommentDto.CreateComment comment){
+        this.email = comment.getEmail();
+        this.uploadDate = new Date();
+        this.content = comment.getContent();
+    }
 }

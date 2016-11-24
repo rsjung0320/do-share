@@ -63,12 +63,14 @@ public class Board {
     // JoinColumn 에서 name을 지정하면 상대 테이블에 해당 네임으로 foreign key가 생긴다.
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="board_idx",foreignKey = @ForeignKey(name = "fk_comment_board"), nullable = true)
-    private List<Comment> comments = new ArrayList<Comment>();
+    // new ArrayList<>(); 이거 삭제 하면 에러가 난다.
+    private List<Comment> comments = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "board_tag", joinColumns = @JoinColumn(name = "board_idx"), inverseJoinColumns = @JoinColumn(
             name = "tag_idx"))
-    private List<Tag> tags = new ArrayList<Tag>();
+    // new ArrayList<>(); 이거 삭제 하면 에러가 난다.
+    private List<Tag> tags = new ArrayList<>();
 
     public Board(){}
 

@@ -29,8 +29,6 @@ public class BoardDto {
         private String title = "";
         @NotBlank
         private String email = "";
-        private Date uploadDate;
-        private Date updatedDate;
         @NotBlank
         private String content = "";
         @NotNull
@@ -42,7 +40,6 @@ public class BoardDto {
     public static class UpdateBoard{
         @NotBlank
         private String title = "";
-        private Date updatedDate;
         @NotBlank
         private String content = "";
         private String tags = "";

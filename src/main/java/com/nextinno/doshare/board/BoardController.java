@@ -2,6 +2,7 @@ package com.nextinno.doshare.board;
 
 import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.comment.Comment;
+import com.nextinno.doshare.comment.CommentDto;
 import com.nextinno.doshare.comment.CommentRepository;
 import com.nextinno.doshare.comment.CommentServiceImpl;
 import com.nextinno.doshare.global.domain.ErrorResponse;
@@ -142,7 +143,7 @@ public class BoardController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Board board = boardRepository.findOne(idx);
+        Board board = boardService.getBoard(idx);
 
         // 기존의 board를 가져와서 지우고!
         // tag는 -1씩 카운트를 내린다.
@@ -190,13 +191,18 @@ public class BoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * board를 삭제한다.
+     *
+     * @param idx
+     * @return
+     */
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "delete/{idx}", method = DELETE)
     @ResponseBody
     public ResponseEntity deleteBoard(@PathVariable String idx) {
-        // boardMapper.deleteBoard(idx);
         boardRepository.delete(Long.valueOf(idx));
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "download/{name}", method = GET)
@@ -244,12 +250,13 @@ public class BoardController {
     /**
      * page 및 size에 맞게 boardList를 주는 API
      * ex) http://localhost:8080/all?size=2&page=0&sort=id,desc
+     *
      * @param pageable
      * @return
      */
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity findAllBoardPage(@PageableDefault(sort="uploadDate", direction = Direction.DESC) Pageable pageable) {
+    public ResponseEntity findAllBoardPage(@PageableDefault(sort = "uploadDate", direction = Direction.DESC) Pageable pageable) {
         Page<Board> page = boardRepository.findAll(pageable);
 
         List<BoardDto.ResponseBoardList> content = page.getContent().parallelStream()
@@ -271,19 +278,34 @@ public class BoardController {
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "comment/{idx}", method = POST)
     @ResponseBody
-    public ResponseEntity addComment(@RequestBody final Comment comment, @PathVariable long idx) {
-        Board board = boardRepository.findOne(idx);
+    public ResponseEntity addComment(@RequestBody @Valid final CommentDto.CreateComment createComment, @PathVariable Long idx, BindingResult result) {
+        if (result.hasErrors() && idx == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        Comment result = commentService.addComment(board, comment);
+        Comment comment = new Comment(createComment);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        Board board = boardService.getBoard(idx);
+
+        Comment resultComment = commentService.addComment(board, comment);
+
+        return new ResponseEntity<>(modelMapper.map(resultComment, CommentDto.ResponseComment.class), HttpStatus.OK);
     }
 
     @RequestMapping(value = "comment/{idx}", method = GET)
     @ResponseBody
-    public ResponseEntity commentFindById(@PathVariable long idx) {
-        List<Comment> resultComment = commentRepository.findByBoardIdx(idx);
-        return new ResponseEntity<>(resultComment, HttpStatus.OK);
+    public ResponseEntity commentFindById(@PathVariable Long idx) {
+        if (idx == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<Comment> commentList = commentRepository.findByBoardIdx(idx);
+
+        List<CommentDto.ResponseComment> resultCommentList = commentList.parallelStream()
+                .map(comment -> modelMapper.map(comment, CommentDto.ResponseComment.class))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(resultCommentList, HttpStatus.OK);
     }
 
     public void saveFile(InputStream uploadedInputStream, String serverLocation) throws IOException {
