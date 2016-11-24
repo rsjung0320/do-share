@@ -1,9 +1,11 @@
 package com.nextinno.doshare.board;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.nextinno.doshare.comment.CommentRepository;
 import com.nextinno.doshare.main.Main;
 import com.nextinno.doshare.user.User;
+import org.hibernate.sql.Delete;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -69,12 +72,7 @@ public class BoardControllerTest {
 
 
         // 2. Board를 만든다.
-        BoardDto.CreateBoard vo = new BoardDto.CreateBoard();
-        vo.setTitle("test");
-        vo.setEmail("test@nablecomm.com");
-        vo.setContent("this is test content");
-        vo.setUserIdx((long) 1);
-        vo.setTags("Java, Spring");
+        BoardDto.CreateBoard vo = getCreateBoard();
 
         ResultActions result = mockMvc.perform(post("/api/v1/board/upload/board")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -89,13 +87,49 @@ public class BoardControllerTest {
 //    public void uploadEditedBoard() throws Exception {
 //
 //    }
-//
-//    @Test
-//    public void deleteBoard() throws Exception {
-//
-//    }
-//
-//    @Test
+
+    @Test
+    public void deleteBoard() throws Exception {
+
+        // 2. Board를 만든다.
+        BoardDto.CreateBoard vo = getCreateBoard();
+
+        ResultActions result = mockMvc.perform(post("/api/v1/board/upload/board")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(vo)));
+
+        result.andDo(print());
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.title", is("test")));
+
+        String content = result.andReturn().getResponse().getContentAsString();
+
+        int boardIdx = JsonPath.read(content, "$.idx");
+
+
+        ResultActions result1 = mockMvc.perform(delete("/api/v1/board/delete/" + boardIdx));
+
+        result1.andDo(print());
+        result1.andExpect(status().isOk());
+
+        ResultActions result2 = mockMvc.perform(get("/api/v1/board/" + boardIdx));
+
+        result2.andDo(print());
+        result2.andExpect(status().isBadRequest());
+        result2.andExpect(jsonPath("$.code", is("board.not.found.exception")));
+    }
+
+    private BoardDto.CreateBoard getCreateBoard() {
+        BoardDto.CreateBoard vo = new BoardDto.CreateBoard();
+        vo.setTitle("test");
+        vo.setEmail("test@nablecomm.com");
+        vo.setContent("this is test content");
+        vo.setUserIdx((long) 1);
+        vo.setTags("Java, Spring");
+        return vo;
+    }
+
+    //    @Test
 //    public void download() throws Exception {
 //
 //    }

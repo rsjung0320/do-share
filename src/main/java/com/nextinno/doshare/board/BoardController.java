@@ -4,6 +4,7 @@ import com.nextinno.doshare.api.API;
 import com.nextinno.doshare.comment.Comment;
 import com.nextinno.doshare.comment.CommentRepository;
 import com.nextinno.doshare.comment.CommentServiceImpl;
+import com.nextinno.doshare.global.domain.ErrorResponse;
 import com.nextinno.doshare.global.domain.GlobalDomain;
 import com.nextinno.doshare.tags.Tag;
 import com.nextinno.doshare.tags.TagRepository;
@@ -34,8 +35,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * @author rsjung
@@ -64,6 +64,9 @@ public class BoardController {
 
     @Autowired
     private CommentServiceImpl commentService;
+
+    @Autowired
+    private BoardServiceImpl boardService;
 
     @RequestMapping(value = "upload/image", method = POST)
     @ResponseBody
@@ -188,7 +191,7 @@ public class BoardController {
     }
 
     @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "delete/{idx}", method = GET)
+    @RequestMapping(value = "delete/{idx}", method = DELETE)
     @ResponseBody
     public ResponseEntity deleteBoard(@PathVariable String idx) {
         // boardMapper.deleteBoard(idx);
@@ -260,17 +263,9 @@ public class BoardController {
     @RequestMapping(value = "{idx}", method = GET)
     @ResponseBody
     public ResponseEntity findByIdBoard(@PathVariable long idx) {
-        // Board resultBoard = boardMapper.findById(idx);
-        Board board = boardRepository.findOne(idx);
+        Board board = boardService.getBoard(idx);
 
-        // resultBoard.getTags();
-        board.setReadCount(board.getReadCount() + 1);
-        // readCount를 1증가 시킨다.
-        // boardMapper.updateReadCount(resultBoard);
-        Board resultBoard = boardRepository.save(board);
-
-        // to-do select 해온 값으로 보내록 한다. 지금은 set한 값으로 주고 있다.
-        return new ResponseEntity<>(modelMapper.map(resultBoard, BoardDto.ResponseBoard.class), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(board, BoardDto.ResponseBoard.class), HttpStatus.OK);
     }
 
     @SuppressWarnings("rawtypes")
@@ -318,5 +313,14 @@ public class BoardController {
                     log.error("outpuStream.close(). e : ", e);
                 }
         }
+    }
+
+    @ExceptionHandler(BoardNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity handleAccountNotFoundException(BoardNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage("[" + e.getId() + "]에 해당하는 게시글이 없습니다.");
+        errorResponse.setCode("board.not.found.exception");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
