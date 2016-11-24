@@ -118,14 +118,14 @@ public class BoardController {
 
                     if (getTag != null) {
                         getTag.setTaggedCount(getTag.getTaggedCount() + 1);
-                        board.getTags().add(getTag);
+                        board.getTag().add(getTag);
                     } else {
                         // 없으면 해당 태그를 만든다.
                         Tag newTag = new Tag();
                         newTag.setName(toUpperCaseTagName);
                         newTag.setTaggedCount(newTag.getTaggedCount() + 1);
                         tagRepository.save(newTag);
-                        board.getTags().add(newTag);
+                        board.getTag().add(newTag);
                     }
                 }
             }
@@ -156,7 +156,7 @@ public class BoardController {
         int savedTagsSize = 1;
         // 1. 먼저 board의 tags의 값을 가져온다.
 
-        List<Tag> savedTagsList = board.getTags();
+        List<Tag> savedTagsList = board.getTag();
         if (savedTagsList.size() != 0) {
             for (Tag tag : savedTagsList) {
                 savedTags += tag.getName() + ",";
