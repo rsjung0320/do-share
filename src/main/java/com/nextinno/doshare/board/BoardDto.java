@@ -64,7 +64,7 @@ public class BoardDto {
         private String updatedDate = ""; 
         private int readCount = 0;
         private String content = "";
-        private List<Comment> comments = null;
-        private List<Tag> tags = null;
+        private List<Comment> comment = null;
+        private List<Tag> tag = null;
     }
 }

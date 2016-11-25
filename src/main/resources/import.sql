@@ -3,7 +3,7 @@ INSERT INTO user VALUES (2, 'yoyo@nablecomm.com','yoyo','qwer12','user');
 INSERT INTO user VALUES (4, 'jane@nablecomm.com','jane','qwer12','user');
 --
 --
-INSERT INTO board(idx, email, title, upload_date, updated_date, read_count, image_path, content, user_idx) VALUES (1,'jane@nablecomm.com','test1','2016-10-25 08:02:12.501',NULL,3,NULL,'test1',4);
+
 INSERT INTO board(idx, email, title, upload_date, updated_date, read_count, image_path, content, user_idx) VALUES (2,'jane@nablecomm.com','test2','2016-10-25 08:02:12.501',NULL,3,NULL,'test2',4);
 INSERT INTO board(idx, email, title, upload_date, updated_date, read_count, image_path, content, user_idx) VALUES (3,'jane@nablecomm.com','test3','2016-10-25 08:02:12.501',NULL,3,NULL,'test3',4);
 INSERT INTO board(idx, email, title, upload_date, updated_date, read_count, image_path, content, user_idx) VALUES (4,'jane@nablecomm.com','test4','2016-10-25 08:02:12.501',NULL,3,NULL,'test4',4);
