@@ -61,13 +61,13 @@ public class BoardController {
     private TagRepository tagRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
     private CommentServiceImpl commentService;
 
     @Autowired
     private BoardServiceImpl boardService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @RequestMapping(value = "upload/image", method = POST)
     @ResponseBody

@@ -1,31 +1,29 @@
 package com.nextinno.doshare.login;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
-
-import java.util.Map;
-
-import javax.servlet.ServletException;
-
+import com.nextinno.doshare.api.API;
+import com.nextinno.doshare.global.domain.ErrorResponse;
+import com.nextinno.doshare.token.Token;
+import com.nextinno.doshare.token.TokenDto;
+import com.nextinno.doshare.user.AlreadyExistUserException;
+import com.nextinno.doshare.user.User;
+import com.nextinno.doshare.user.UserDto;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.nextinno.doshare.api.API;
-import com.nextinno.doshare.common.Common;
-import com.nextinno.doshare.domain.tokens.Token;
-import com.nextinno.doshare.user.User;
-import com.nextinno.doshare.user.UserRepository;
-import com.nextinno.doshare.global.domain.GlobalDomain;
+import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * @author rsjung
@@ -37,149 +35,119 @@ public class LoginController {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
-    private UserRepository userRepository;
-    
-    @Value("${jwt.secret}")
-    private String SECRET;
+    private LoginServiceImpl loginService;
 
-    @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "signin", method = RequestMethod.POST, consumes = "application/json")
+    @Autowired
+    private ModelMapper modelMapper;
+
+    /**
+     *
+     * @param reqLogin
+     * @param result
+     * @return 성공시 200, 실패시 NotEqualPasswordException or UserNotFoundException
+     */
+    @RequestMapping(value = "/signin", method = POST)
     @ResponseBody
-    public ResponseEntity singin(@RequestBody Map<String, Object> params) throws ServletException {
-        GlobalDomain globalDomain = new GlobalDomain();
-        Token token = new Token();
-        
-        // to-do 암호화 하는 것 생각해 보기, 클라이언트에서 먼저 암호화 해서 보내고, 받고 해야 할 것 같다.
-        User reqUser = new User();
-        reqUser.setEmail((String) params.get("email"));
-        reqUser.setPassword((String) params.get("password"));
-        
-        String password = reqUser.getPassword();
-
-        // 1. DB에서 값을 가져온다.
-        User user = userRepository.findByEmail(reqUser.getEmail());
-        if (user != null) {
-            // 2. password를 비교한다.
-            if (password.equals(user.getPassword())) {
-
-                // 3. 아무런 변경이 없으면 token을 발행한다.
-                token.setToken(Common.generateToken(user.getEmail(), user.getRole()));
-                // remember me를 누른 사람만 준다.
-                if((boolean) params.get("remember")) {
-                    token.setRefreshToken(Common.generateRefreshToken(user.getEmail(), user.getRole()));
-                }
-                return new ResponseEntity<Token>(token, HttpStatus.OK);
-            } else {
-                logger.error("singin Check your ID or Password.");
-                globalDomain.setMessage("Check your ID or Password.");
-                return new ResponseEntity<GlobalDomain>(globalDomain, HttpStatus.BAD_REQUEST);
-            }
-        } else {
-            // 그리고 i18n을 적용하도록 한다.
-            logger.error("singin Check your ID or Password.");
-            globalDomain.setMessage("Check your ID or Password.");
-            return new ResponseEntity<GlobalDomain>(globalDomain, HttpStatus.BAD_REQUEST);
+    public ResponseEntity singin(@RequestBody @Valid final LoginDto.SignIn reqLogin, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        Login login = new Login(reqLogin);
+
+        Token token = loginService.getToken(login);
+
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     /**
      * @param reqUser
-     * @return 201 성공적으로 요청되었으며 서버가 새 리소스를 작성했다.
+     * @return 성공시 201, 실패시 AlreadyExistUserException
      * @throws Exception
      */
-    @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "signup", method = RequestMethod.POST)
+    @RequestMapping(value = "/signup", method = POST)
     @ResponseBody
-    public ResponseEntity signup(@RequestBody final User reqUser) throws Exception {
-
-        // 1. DB에 값이 있는지 확인한다.
-        if (!isCertificatedUser(reqUser.getEmail(), reqUser.getPassword())) {
-            // 2. 없으면 DB에 값을 insert 한다.
-            userRepository.save(reqUser);
-        } else {
-            // 2.1 있으면 에러메시지를 response 한다.
-            // to-do i18n 처리한다.
-            logger.error("User already existed.");
-            return new ResponseEntity<String>("User already existed.", HttpStatus.BAD_REQUEST);
+    public ResponseEntity signup(@RequestBody @Valid final UserDto.CreateUser reqUser, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        User user = new User(reqUser);
+        User resultUser = loginService.saveUser(user);
 
-        // 3. 201 ok를 준다.
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<>(modelMapper.map(resultUser, UserDto.ResponseUser.class), HttpStatus.CREATED);
     }
-    
+
     /**
      * refresh token이 인증이 되면 token과 refresh token을 재 발행 한다.
-     * 
-     * @param params
-     * @return
-     * @throws Exception
+     *
+     * @param reqToken
+     * @param result
+     * @return 성공시 200, 실패시 InvalidTokenException
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @RequestMapping(value = "token/refresh", method = RequestMethod.POST)
+    @RequestMapping(value = "/token/refresh", method = POST)
     @ResponseBody
-    public ResponseEntity refreshToken(@RequestBody Map<String, Object> params) throws Exception {
-        Token token = new Token();
-           
-        if(isExpired((String)params.get("refreshToken"))){
-            token.setToken(Common.generateToken((String)params.get("email"), (String)params.get("role")));
-            token.setRefreshToken(Common.generateRefreshToken((String)params.get("email"), (String)params.get("role")));
-            return new ResponseEntity<Token>(token, HttpStatus.OK);
-        } else {
-            logger.error("Invalid token.");
-            return new ResponseEntity("Invalid token.", HttpStatus.BAD_REQUEST);
+    public ResponseEntity refreshToken(@RequestBody @Valid final TokenDto.RefreshToken reqToken, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        Token token = loginService.refreshToken(reqToken);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
-    
+
     /**
      * 1시간 마다 클라이언트에서  token을 regenerate 하기 위해 request를 보내는대, 그것을 처리하기 위한 함수이다.
-     * 
-     * @param params
+     * @param reqToken
+     * @param result 성공시 200, 실패시
      * @return
-     * @throws Exception
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @RequestMapping(value = "token/regenerate", method = RequestMethod.POST)
+    @RequestMapping(value = "token/regenerate", method = POST)
     @ResponseBody
-    public ResponseEntity regenerateToken(@RequestBody Map<String, Object> params) throws Exception {
-        Token token = new Token();
-           
-        if(isExpired((String)params.get("token"))){
-            token.setToken(Common.generateToken((String)params.get("email"), (String)params.get("role")));
-            if( (boolean)params.get("remember") ){
-                token.setRefreshToken(Common.generateRefreshToken((String)params.get("email"), (String)params.get("role")));
-            }
-            
-            return new ResponseEntity<Token>(token, HttpStatus.OK);
-        } else {
-            logger.error("Invalid token.");
-            return new ResponseEntity("Invalid token.", HttpStatus.BAD_REQUEST);
+    public ResponseEntity regenerateToken(@RequestBody @Valid final TokenDto.RegenerateToken reqToken, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    }
 
-    /**
-     * @param string
-     * @return
-     */
-    private boolean isExpired(String token) {
-        try {
-            Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
-        } catch (final SignatureException e) {
-            return false;
-        }
-        return true;
+        Token token = loginService.regenerateToken(reqToken);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
 
-    /**
-     * @param reqUser
-     * @return
-     */
-    private boolean isCertificatedUser(String email, String password) {
-        User user = userRepository.findByEmailAndPassword(email, password);
-        if (user != null) {
-            return true;
-        } else {
-            return false;
-        }
+    /* Exceptions */
+
+    @ExceptionHandler(AlreadyExistUserException.class)
+    @ResponseBody
+    public ResponseEntity handleAlreadyExistUserException(AlreadyExistUserException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage("[" + e.getEmail() + "]은 이미 존재합니다.");
+        errorResponse.setCode("already.exist.user.exception");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotEqualPasswordException.class)
+    @ResponseBody
+    public ResponseEntity handleNotEqualPasswordException(NotEqualPasswordException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage("[" + e.getEmail() + "]가 입력한 패스워드가 다릅니다.");
+        errorResponse.setCode("not.equal.password.exception");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity handleUserNotFoundException(UserNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage("[" + e.getEmail() + "]은 존재하지 않습니다.");
+        errorResponse.setCode("user.not.found.exception");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    @ResponseBody
+    public ResponseEntity handleInvalidTokenException(InvalidTokenException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage("[" + e.getEmail() + "]의 토큰이 유효하지 않습니다.");
+        errorResponse.setCode("invalid.token.exception");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,5 +1,7 @@
 package com.nextinno.doshare.user;
 
+import com.nextinno.doshare.api.API;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.nextinno.doshare.api.API;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author rsjung
@@ -26,11 +27,15 @@ public class UserController {
     
     @Autowired
     private UserRepository userRepository;
-    
-    @RequestMapping(method = RequestMethod.POST)
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    // TODO GET으로 변경하도록 한다.
+    @RequestMapping(method = POST)
     @ResponseBody
-    public ResponseEntity<User> findByEmail(@RequestBody final User reqUser) {
+    public ResponseEntity findByEmail(@RequestBody final User reqUser) {
         User user = userRepository.findByEmail(reqUser.getEmail());
-        return new ResponseEntity<User>(user, HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(user, UserDto.ResponseUser.class), HttpStatus.OK);
     }
 }

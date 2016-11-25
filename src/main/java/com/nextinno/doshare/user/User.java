@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author rsjung
- *
  */
 @Entity
 @Data
@@ -20,39 +19,29 @@ public class User {
     @Id
     @GeneratedValue
     private Long idx;
-    
-    @Column(name = "email", nullable = false, unique=true)
+
+    @Column(name = "email", nullable = false, unique = true)
     private String email = "";
-    
+
     @Column(name = "name", nullable = false)
-    private String name = "";   
-    
+    private String name = "";
+
     @Column(name = "password", nullable = false)
     private String password = "";
-    
+
     // user / admin
     @Column(name = "role", nullable = false)
     private String role = "user";
-    
-//    @OneToMany(targetEntity=Board.class, fetch=FetchType.LAZY)
-//    @JoinColumn(name="user_idx", nullable = true)
-//    @JsonIgnore
-//    private List<Board> boards;
 
-    /**
-     * @return the password
-     */
-    @JsonIgnore
-    public String getPassword() {
-        return password;
+    public User() {}
+
+    public User(UserDto.CreateUser user) {
+        this.email = user.getEmail();
+        this.name = user.getName();
+        this.password = user.getPassword();
+
+        if (!user.getRole().equals("admin")) {
+            this.role = "user";
+        }
     }
-
-    /**
-     * @param password the password to set
-     */
-    @JsonProperty
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
 }

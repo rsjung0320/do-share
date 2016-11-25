@@ -27,6 +27,7 @@ public class Common {
     public Claims getClaimsFromToken(String token) {
         Claims claims;
         try {
+            // TODO 키는 따로 빼도록 한다.
             claims = Jwts.parser().setSigningKey("nextInno").parseClaimsJws(token).getBody();
         } catch (Exception e) {
             claims = null;

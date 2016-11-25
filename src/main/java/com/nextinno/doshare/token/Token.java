@@ -1,4 +1,4 @@
-package com.nextinno.doshare.domain.tokens;
+package com.nextinno.doshare.token;
 
 import lombok.Data;
 

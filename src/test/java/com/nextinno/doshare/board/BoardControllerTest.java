@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.nextinno.doshare.comment.Comment;
 import com.nextinno.doshare.comment.CommentDto;
-import com.nextinno.doshare.comment.CommentRepository;
-import com.nextinno.doshare.comment.CommentServiceImpl;
 import com.nextinno.doshare.main.Main;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,19 +42,10 @@ public class BoardControllerTest {
     ObjectMapper objectMapper;
 
     @Autowired
-    private BoardRepository boardRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private CommentServiceImpl commentService;
+    MockMvc mockMvc;
 
     @Autowired
     private BoardServiceImpl boardService;
-
-    @Autowired
-    MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {
@@ -141,6 +130,7 @@ public class BoardControllerTest {
 //    @Test
 //    public void commentFindById() throws Exception {
 //    }
+
     private Long addCommentService() throws Exception {
         BoardDto.CreateBoard vo = getCreateBoard();
 
