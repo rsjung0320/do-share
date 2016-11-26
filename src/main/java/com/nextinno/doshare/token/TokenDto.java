@@ -2,6 +2,7 @@ package com.nextinno.doshare.token;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 
@@ -27,7 +28,6 @@ public class TokenDto {
         private String email;
         @NotBlank
         private String role;
-        @NotNull
-        private boolean remember;
+        private boolean remember = false;
     }
 }

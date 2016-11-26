@@ -30,8 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by rsjung on 2016-11-25.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = Main.class)
-@AutoConfigureMockMvc
+@SpringBootTest(classes = Main.class) // @ContextConfiguration의 대안이다.
 @Transactional // @Test로 붙은 것들을 한번 실행 시킨 후 rollback을 한다.
 public class LoginControllerTest {
     @Autowired
@@ -40,7 +39,6 @@ public class LoginControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
     MockMvc mockMvc;
 
     @Before
@@ -118,7 +116,9 @@ public class LoginControllerTest {
         reqToken.setToken(token);
         reqToken.setEmail(user.getEmail());
         reqToken.setRole(user.getRole());
-//        reqToken.setRemember(false);
+
+        System.out.println("\n==================================");
+        System.out.println(reqToken.toString());
 
         ResultActions result = mockMvc.perform(post("/login/token/regenerate")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -142,6 +142,9 @@ public class LoginControllerTest {
         reqToken.setEmail(user.getEmail());
         reqToken.setRole(user.getRole());
         reqToken.setRemember(true);
+
+        System.out.println("\n==================================");
+        System.out.println(reqToken.toString());
 
         ResultActions result = mockMvc.perform(post("/login/token/regenerate")
                 .contentType(MediaType.APPLICATION_JSON)

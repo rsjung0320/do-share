@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author rsjung
