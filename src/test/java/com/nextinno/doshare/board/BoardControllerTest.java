@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -32,9 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Main.class)
-@AutoConfigureMockMvc
+@WebAppConfiguration // 이 Annotation을 붙이지 않으면 WebApplicationContext 는 ApplicationContext가 된다고 함
 @Transactional // @Test로 붙은 것들을 한번 실행 시킨 후 rollback을 한다.
 public class BoardControllerTest {
+
     @Autowired
     WebApplicationContext wac;
 

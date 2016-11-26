@@ -112,7 +112,6 @@ public class LoginController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-
     /* Exceptions */
 
     @ExceptionHandler(AlreadyExistUserException.class)
