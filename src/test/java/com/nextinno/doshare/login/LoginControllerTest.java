@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,13 +42,13 @@ public class LoginControllerTest {
 
     MockMvc mockMvc;
 
-    @Autowired
-    private FilterChainProxy springSecurityFilterChain;
+//    @Autowired
+//    private FilterChainProxy springSecurityFilterChain;
 
     @Before
     public void setup() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                .addFilter(springSecurityFilterChain)
+//                .addFilter(springSecurityFilterChain)
                 .build();
     }
 
@@ -179,27 +178,6 @@ public class LoginControllerTest {
         result.andExpect(jsonPath("$.token", notNullValue()));
     }
 
-    private UserDto.CreateUser getCreateUser() {
-        UserDto.CreateUser user = new UserDto.CreateUser();
-        user.setEmail("test@nablecomm.com");
-        user.setPassword("qwer12");
-        user.setName("test");
-        user.setRole("USER");
-        return user;
-    }
-
-    private void signup_사용자추가() throws Exception {
-        UserDto.CreateUser user = getCreateUser();
-
-        ResultActions result = mockMvc.perform(post("/login/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)));
-
-        result.andDo(print());
-        result.andExpect(status().isCreated());
-        result.andExpect(jsonPath("$.email", is("junittest@test.com")));
-    }
-
     private String getToken() throws Exception {
         UserDto.CreateUser user = getCreateUser();
         LoginDto.SignIn reqlogin = new LoginDto.SignIn();
@@ -240,5 +218,26 @@ public class LoginControllerTest {
         String content = result.andReturn().getResponse().getContentAsString();
 
         return JsonPath.read(content, "$.refreshToken");
+    }
+
+    private UserDto.CreateUser getCreateUser() {
+        UserDto.CreateUser user = new UserDto.CreateUser();
+        user.setEmail("junittest@test.com");
+        user.setPassword("qwer12");
+        user.setName("test");
+        user.setRole("USER");
+        return user;
+    }
+
+    private void signup_사용자추가() throws Exception {
+        UserDto.CreateUser user = getCreateUser();
+
+        ResultActions result = mockMvc.perform(post("/login/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)));
+
+        result.andDo(print());
+        result.andExpect(status().isCreated());
+        result.andExpect(jsonPath("$.email", is("junittest@test.com")));
     }
 }

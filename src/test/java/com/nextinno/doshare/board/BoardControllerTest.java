@@ -43,7 +43,6 @@ public class BoardControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
     MockMvc mockMvc;
 
     @Autowired
