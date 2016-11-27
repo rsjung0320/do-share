@@ -34,12 +34,11 @@ public class LoginServiceImpl implements LoginService {
         // 1. DB에 값이 있는지 확인한다.
         User resultUser = userRepository.findByEmail(user.getEmail());
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (resultUser != null) {
             // 기존에 존재하는 User가 있으면 에러메시지를 response 한다.
             throw new AlreadyExistUserException(resultUser.getEmail());
         }
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }

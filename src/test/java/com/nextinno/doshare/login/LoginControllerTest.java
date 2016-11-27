@@ -181,9 +181,9 @@ public class LoginControllerTest {
 
     private UserDto.CreateUser getCreateUser() {
         UserDto.CreateUser user = new UserDto.CreateUser();
-        user.setEmail("yoyo@nablecomm.com");
+        user.setEmail("test@nablecomm.com");
         user.setPassword("qwer12");
-        user.setName("yoyo");
+        user.setName("test");
         user.setRole("USER");
         return user;
     }
