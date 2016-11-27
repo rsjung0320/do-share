@@ -31,7 +31,7 @@ public class User {
 
     // user / admin
     @Column(name = "role", nullable = false)
-    private String role = "user";
+    private String role = "USER";
 
     public User() {}
 
@@ -40,8 +40,12 @@ public class User {
         this.name = user.getName();
         this.password = user.getPassword();
 
-        if (!user.getRole().equals("admin")) {
-            this.role = "user";
+        if (user.getRole() != null) {
+            if(!user.getRole().equals("ADMIN")) {
+                this.role = "USER";
+            } else {
+                this.role = "ADMIN";
+            }
         }
     }
 }

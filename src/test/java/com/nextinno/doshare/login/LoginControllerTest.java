@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,9 +43,13 @@ public class LoginControllerTest {
 
     MockMvc mockMvc;
 
+    @Autowired
+    private FilterChainProxy springSecurityFilterChain;
+
     @Before
     public void setup() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .addFilter(springSecurityFilterChain)
                 .build();
     }
 
@@ -69,19 +74,37 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void singin_notRemember() throws Exception {
+    public void signin_notRemember() throws Exception {
         signup_사용자추가();
 
         getToken();
     }
 
     @Test
-    public void singin_remember() throws Exception {
+    public void signin_remember() throws Exception {
         signup_사용자추가();
 
         get_refreshToken();
     }
 
+    @Test
+    public void signin_패스워드오류() throws Exception {
+        signup_사용자추가();
+
+        UserDto.CreateUser user = getCreateUser();
+        LoginDto.SignIn reqlogin = new LoginDto.SignIn();
+        reqlogin.setEmail(user.getEmail());
+        reqlogin.setPassword("failpassword");
+        reqlogin.setRemember(false);
+
+        ResultActions result = mockMvc.perform(post("/login/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reqlogin)));
+
+        result.andDo(print());
+        result.andExpect(status().isBadRequest());
+        result.andExpect(jsonPath("$.code", is("not.equal.password.exception")));
+    }
     @Test
     public void refreshToken() throws Exception {
         signup_사용자추가();
@@ -158,10 +181,10 @@ public class LoginControllerTest {
 
     private UserDto.CreateUser getCreateUser() {
         UserDto.CreateUser user = new UserDto.CreateUser();
-        user.setEmail("junittest@test.com");
+        user.setEmail("yoyo@nablecomm.com");
         user.setPassword("qwer12");
-        user.setName("junit4");
-        user.setRole("user");
+        user.setName("yoyo");
+        user.setRole("USER");
         return user;
     }
 

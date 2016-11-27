@@ -72,8 +72,8 @@ public class LoginController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         User user = new User(reqUser);
-        User resultUser = loginService.saveUser(user);
 
+        User resultUser = loginService.saveUser(user);
         return new ResponseEntity<>(modelMapper.map(resultUser, UserDto.ResponseUser.class), HttpStatus.CREATED);
     }
 

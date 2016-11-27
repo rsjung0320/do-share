@@ -10,8 +10,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,18 +23,23 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Value("${jwt.secret}")
     private String SECRET;
 
     @Override
     public User saveUser(User user) {
         // 1. DB에 값이 있는지 확인한다.
-        User resultUser = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
+        User resultUser = userRepository.findByEmail(user.getEmail());
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (resultUser != null) {
             // 기존에 존재하는 User가 있으면 에러메시지를 response 한다.
             throw new AlreadyExistUserException(resultUser.getEmail());
         }
+
 
         return userRepository.save(user);
     }
@@ -48,7 +52,7 @@ public class LoginServiceImpl implements LoginService {
         User resultUser = userRepository.findByEmail(login.getEmail());
         if (resultUser != null) {
             // 2. password를 비교한다.
-            if (resultUser.getPassword().equals(login.getPassword())) {
+            if (passwordEncoder.matches(login.getPassword(), resultUser.getPassword())) {
                 // 3. 아무런 변경이 없으면 token을 발행한다.
                 token.setToken(Common.generateToken(resultUser.getEmail(), resultUser.getRole()));
                 // remember me를 누른 사람만 준다.
